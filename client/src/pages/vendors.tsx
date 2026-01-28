@@ -1332,24 +1332,10 @@ export default function VendorsPage() {
                                                         <DropdownMenuItem onClick={() => handleSort("unusedCredits")} className={cn(sortBy === "unusedCredits" && "bg-blue-50 text-blue-700 font-medium")}>
                                                             Unused Credits {sortBy === "unusedCredits" && (sortOrder === "asc" ? "↑" : "↓")}
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => handleSort("createdAt")} className={cn(sortBy === "createdAt" && "bg-blue-50 text-blue-700 font-medium")}>
-                                                            Created Time {sortBy === "createdAt" && (sortOrder === "asc" ? "↑" : "↓")}
-                                                        </DropdownMenuItem>
                                                     </DropdownMenuSubContent>
                                                 </DropdownMenuPortal>
                                             </DropdownMenuSub>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuSub>
-                                                <DropdownMenuSubTrigger className="gap-2">
-                                                    <Download className="h-4 w-4" />
-                                                    <span>Import</span>
-                                                </DropdownMenuSubTrigger>
-                                                <DropdownMenuPortal>
-                                                    <DropdownMenuSubContent>
-                                                        <DropdownMenuItem onClick={handleImport}>Import Vendors</DropdownMenuItem>
-                                                    </DropdownMenuSubContent>
-                                                </DropdownMenuPortal>
-                                            </DropdownMenuSub>
                                             <DropdownMenuSub>
                                                 <DropdownMenuSubTrigger className="gap-2">
                                                     <Download className="h-4 w-4 rotate-180" />
@@ -1370,10 +1356,6 @@ export default function VendorsPage() {
                                             <DropdownMenuItem onClick={fetchVendors} className="gap-2">
                                                 <RefreshCw className="h-4 w-4" />
                                                 Refresh List
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={handleResetColumnWidth} className="gap-2">
-                                                <RefreshCw className="h-4 w-4 rotate-180" />
-                                                Reset Column Width
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
