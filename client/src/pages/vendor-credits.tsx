@@ -431,51 +431,6 @@ export default function VendorCredits() {
     }
   };
 
-  // Sort handler
-  const handleSort = (sortField: string) => {
-    setSortBy(sortField);
-    toast({ title: `Sorted by ${sortField}` });
-  };
-
-  // Import handler
-  const handleImport = () => {
-    setImportDialogOpen(true);
-  };
-
-  // Export handler
-  const handleExport = async () => {
-    try {
-      const credits = vendorCreditsData?.data || [];
-      const headers = ['Credit Number', 'Vendor Name', 'Date', 'Reference Number', 'Amount', 'Balance', 'Status'];
-      const csvContent = [
-        headers.join(','),
-        ...credits.map(credit => [
-          credit.creditNumber,
-          `"${credit.vendorName}"`,
-          credit.date,
-          credit.referenceNumber || '',
-          credit.amount,
-          credit.balance,
-          credit.status
-        ].join(','))
-      ].join('\n');
-
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `vendor_credits_export_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-
-      toast({ title: "Vendor credits exported successfully" });
-    } catch (error) {
-      toast({ title: "Failed to export vendor credits", variant: "destructive" });
-    }
-  };
-
   // Preferences handler
   const handlePreferences = () => {
     setPreferencesDialogOpen(true);
@@ -564,11 +519,7 @@ export default function VendorCredits() {
     }
   };
 
-  const filteredVendorCredits = vendorCredits.filter(credit =>
-    credit.creditNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    credit.vendorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    credit.referenceNumber?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredVendorCredits = vendorCredits;
 
   // Deep linking for selected vendor credit
   useEffect(() => {
