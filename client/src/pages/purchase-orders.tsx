@@ -1292,10 +1292,6 @@ export default function PurchaseOrders() {
                       }} className="gap-2">
                         <FileSpreadsheet className="h-4 w-4" /> Export to Excel
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={fetchPurchaseOrders} className="gap-2">
-                        <RefreshCw className="h-4 w-4" /> Refresh List
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
