@@ -2057,7 +2057,7 @@ export default function Bills() {
                         <TableRow
                           key={bill.id}
                           onClick={() => handleBillClick(bill as Bill)}
-                          className={`cursor-pointer hover-elevate ${selectedBill?.id === bill.id ? "bg-sidebar/5" : ""}`}
+                          className={`cursor-pointer hover-elevate ${(selectedBill as any)?.id === bill.id ? "bg-sidebar/5" : ""}`}
                           data-testid={`row-bill-${bill.id}`}
                         >
                           <TableCell onClick={(e) => e.stopPropagation()}>

@@ -931,10 +931,10 @@ export default function PaymentsMade() {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                            {paginatedItems.map((payment) => (
+                            {paginatedItems.map((payment: any) => (
                               <tr
                                 key={payment.id}
-                                className={`hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors ${selectedPayment?.id === payment.id ? 'bg-sidebar/5 dark:bg-blue-900/20' : ''}`}
+                                className={`hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors ${(selectedPayment as any)?.id === payment.id ? 'bg-sidebar/5 dark:bg-blue-900/20' : ''}`}
                                 onClick={() => handleRowClick(payment)}
                                 data-testid={`row-payment-${payment.id}`}
                               >
@@ -1089,8 +1089,8 @@ export default function PaymentsMade() {
                     {/* Header with Organization Info */}
                     <div style={{ marginBottom: '40px' }}>
                       <PurchasePDFHeader
-                        organization={currentOrganization}
-                        logo={branding?.logo}
+                        organization={currentOrganization || undefined}
+                        logo={branding?.logo || undefined}
                         documentTitle="PAYMENT MADE"
                         documentNumber={getPaymentNumberString(selectedPayment.paymentNumber)}
                         date={selectedPayment.paymentDate}
