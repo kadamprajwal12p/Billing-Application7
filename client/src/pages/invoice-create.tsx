@@ -474,19 +474,16 @@ export default function InvoiceCreate() {
   const [newPersonPhone, setNewPersonPhone] = useState("");
   const [newPersonCustomerId, setNewPersonCustomerId] = useState("");
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachments, setAttachments] = useState<File[]>([]);
 
-  const getNextInvoiceNumber = () => {
-    const lastNumber = invoices.length > 0
-      ? parseInt(invoices[0].invoiceNumber.replace("INV-", ""))
-      : 12;
-    return `INV-${String(lastNumber + 1).padStart(5, "0")}`;
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setAttachments(prev => [...prev, ...files]);
   };
 
-  const [invoiceNumber, setInvoiceNumber] = useState(getNextInvoiceNumber().replace("INV-", ""));
-
-  const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
+  const removeAttachment = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSaveInvoice = async (saveStatus: "draft" | "pending" = "pending") => {
     const formattedDate = format(date, "yyyy-MM-dd");
