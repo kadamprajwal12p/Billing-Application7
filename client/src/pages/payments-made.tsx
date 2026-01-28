@@ -755,27 +755,6 @@ export default function PaymentsMade() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56 p-1">
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem data-testid="menu-import" onClick={handleImportPayments}>
-                        <Upload className="mr-2 h-4 w-4" /> Import
-                      </DropdownMenuItem>
-                      <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>
-                          <Download className="mr-2 h-4 w-4" />
-                          <span>Export</span>
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                          <DropdownMenuSubContent>
-                            <DropdownMenuItem onClick={() => handleExportPayments('excel')}>
-                              Export as Excel (.xlsx)
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleExportPayments('json')}>
-                              Export as JSON
-                            </DropdownMenuItem>
-                          </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                      </DropdownMenuSub>
-                      <DropdownMenuSeparator />
                       <DropdownMenuSub>
                         <DropdownMenuSubTrigger className={sortBy ? "bg-blue-50" : ""}>
                           <ArrowUpDown className="mr-2 h-4 w-4" />
@@ -806,6 +785,26 @@ export default function PaymentsMade() {
                               className={sortBy === "amount" ? "bg-blue-600 text-white" : ""}
                             >
                               Amount {sortBy === "amount" && (sortOrder === "asc" ? "↑" : "↓")}
+                            </DropdownMenuItem>
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem data-testid="menu-import" onClick={handleImportPayments}>
+                        <Upload className="mr-2 h-4 w-4" /> Import
+                      </DropdownMenuItem>
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                          <Download className="mr-2 h-4 w-4" />
+                          <span>Export</span>
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent>
+                            <DropdownMenuItem onClick={() => handleExportPayments('excel')}>
+                              Export as Excel (.xlsx)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExportPayments('json')}>
+                              Export as JSON
                             </DropdownMenuItem>
                           </DropdownMenuSubContent>
                         </DropdownMenuPortal>
