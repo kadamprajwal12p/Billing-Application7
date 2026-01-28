@@ -20,6 +20,7 @@ import {
     Download
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { exportToExcel } from "@/lib/excel-utils";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -244,6 +245,35 @@ export default function EWayBills() {
         }
     };
 
+    const handleExportBills = async () => {
+        const dataToExport = filteredEwayBills.map(bill => ({
+            'E-Way Bill Number': bill.ewayBillNumber || 'Draft',
+            'Document Number': bill.documentNumber || '-',
+            'Document Type': bill.documentType || '-',
+            'Date': bill.date ? new Date(bill.date).toLocaleDateString('en-IN') : '-',
+            'Customer Name': bill.customerName || '-',
+            'Customer GSTIN': bill.customerGstin || '-',
+            'Transaction Type': bill.transactionType || '-',
+            'Status': bill.status || '-',
+            'Expiry Date': bill.expiryDate ? new Date(bill.expiryDate).toLocaleDateString('en-IN') : '-',
+            'Total Amount': bill.total || 0
+        }));
+
+        const success = await exportToExcel(dataToExport, 'e-way-bills', 'E-Way Bills');
+        if (success) {
+            toast({
+                title: "Export Successful",
+                description: `Exported ${dataToExport.length} e-way bills to Excel.`,
+            });
+        } else {
+            toast({
+                title: "Export Failed",
+                description: "No data to export or an error occurred.",
+                variant: "destructive",
+            });
+        }
+    };
+
     const filteredEwayBills = ewayBills
         .filter(bill =>
             bill.ewayBillNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -418,7 +448,7 @@ export default function EWayBills() {
                                             >
                                                 <Download className="mr-2 h-4 w-4" /> Import Bills
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem data-testid="menu-export">
+                                            <DropdownMenuItem data-testid="menu-export" onClick={handleExportBills}>
                                                 <Download className="mr-2 h-4 w-4" /> Export Bills
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
