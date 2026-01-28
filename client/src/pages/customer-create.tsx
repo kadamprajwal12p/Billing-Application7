@@ -1674,19 +1674,19 @@ export default function CustomerCreate() {
                         </div>
 
                         <div className="space-y-4">
-                          <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-semibold text-sm uppercase tracking-wider text-slate-500">Shipping Address</h3>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={copyBillingToShipping}
-                              className="text-sidebar hover:text-sidebar/80 h-7 text-xs font-medium"
-                              data-testid="button-copy-billing-address"
-                            >
-                              Copy billing address
-                            </Button>
-                          </div>
+                            <div className="flex items-center justify-between mb-4">
+                              <h3 className="font-semibold text-sm uppercase tracking-wider text-slate-500">Shipping Address</h3>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={copyBillingToShipping}
+                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 border border-transparent min-h-8 rounded-md px-3 hover:text-sidebar/80 h-7 text-xs font-medium text-[#60b1f7]"
+                                data-testid="button-copy-billing-address"
+                              >
+                                Copy billing address
+                              </Button>
+                            </div>
 
                           <FormField
                             control={form.control}

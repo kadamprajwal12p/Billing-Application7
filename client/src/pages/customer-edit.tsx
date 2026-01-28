@@ -1102,7 +1102,7 @@ export default function CustomerEdit() {
                                 description: "Billing address copied to shipping address.",
                               });
                             }}
-                            className="text-sidebar hover:text-sidebar/80 h-7 text-xs font-medium"
+                            className="inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 border border-transparent min-h-8 rounded-md px-3 hover:text-sidebar/80 h-7 text-xs font-medium text-[#60b1f7]"
                             data-testid="button-copy-billing-address"
                           >
                             Copy billing address
