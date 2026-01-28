@@ -68,6 +68,23 @@ export const transformPOListForExcel = (purchaseOrders: any[]) => {
 };
 
 /**
+ * Transforms Bill list data for Excel export
+ */
+export const transformBillListForExcel = (bills: any[]) => {
+    return bills.map(bill => ({
+        'Date': bill.billDate ? new Date(bill.billDate).toLocaleDateString('en-IN') : '-',
+        'Bill Number': bill.billNumber || '-',
+        'Reference Number': bill.orderNumber || '-',
+        'Vendor Name': bill.vendorName || '-',
+        'Status': bill.status || '-',
+        'Due Date': bill.dueDate ? new Date(bill.dueDate).toLocaleDateString('en-IN') : '-',
+        'Amount': bill.total || 0,
+        'Balance Due': bill.balanceDue || 0,
+        'Created At': bill.createdAt ? new Date(bill.createdAt).toLocaleString('en-IN') : '-'
+    }));
+};
+
+/**
  * Transforms a single Purchase Order for a detailed Excel export
  */
 export const transformPODetailForExcel = (po: any) => {

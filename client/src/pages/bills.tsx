@@ -1646,11 +1646,12 @@ export default function Bills() {
         case 'payables':
           return (b.balanceDue || 0) - (a.balanceDue || 0);
         case 'unusedCredits':
-          return 0; // No unused credits field, maintain current order
+          // Assuming unused credits is a field on the vendor or bill
+          return (b.vendorUnusedCredits || 0) - (a.vendorUnusedCredits || 0);
         case 'createdTime':
-          return new Date(b.billDate).getTime() - new Date(a.billDate).getTime();
+          return new Date(b.createdAt || b.billDate).getTime() - new Date(a.createdAt || a.billDate).getTime();
         case 'lastModifiedTime':
-          return new Date(b.billDate).getTime() - new Date(a.billDate).getTime();
+          return new Date(b.updatedAt || b.billDate).getTime() - new Date(a.updatedAt || a.billDate).getTime();
         default:
           return 0;
       }
@@ -1667,33 +1668,12 @@ export default function Bills() {
   // Export handler
   const handleExport = async () => {
     try {
-      // Create CSV content
-      const headers = ['Bill Number', 'Vendor Name', 'Bill Date', 'Due Date', 'Total', 'Balance Due', 'Status'];
-      const csvContent = [
-        headers.join(','),
-        ...bills.map(bill => [
-          bill.billNumber,
-          `"${bill.vendorName}"`,
-          bill.billDate,
-          bill.dueDate,
-          bill.total,
-          bill.balanceDue,
-          bill.status
-        ].join(','))
-      ].join('\n');
-
-      // Download CSV
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `bills_export_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-
-      toast({ title: "Bills exported successfully" });
+      toast({
+        title: "Exporting...",
+        description: "Preparing Excel file for all bills.",
+      });
+      const transformedData = transformBillListForExcel(filteredBills);
+      exportToExcel(transformedData, 'Bills_List', 'Bills');
     } catch (error) {
       toast({ title: "Failed to export bills", variant: "destructive" });
     }
