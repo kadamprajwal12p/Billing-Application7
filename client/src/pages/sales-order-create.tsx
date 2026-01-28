@@ -354,6 +354,17 @@ export default function SalesOrderCreatePage() {
     return subTotal + tax + shipping + adjustment;
   };
 
+  const [attachments, setAttachments] = useState<File[]>([]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setAttachments(prev => [...prev, ...files]);
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (status: string) => {
     if (!formData.customerId) {
       toast({ title: "Please select a customer", variant: "destructive" });
@@ -844,19 +855,50 @@ export default function SalesOrderCreatePage() {
                   <div className="mt-8 pt-8 border-t border-slate-100">
                     <div className="space-y-4">
                       <Label className="text-slate-700 font-medium">Attach File(s) to Sales Order</Label>
-                      <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:bg-slate-50 transition-colors">
-                        <Button
-                          variant="ghost"
-                          className="flex flex-col items-center gap-2 h-auto"
-                          type="button"
-                          data-testid="button-upload-file"
-                        >
-                          <div className="h-10 w-10 bg-blue-50 rounded-full flex items-center justify-center">
-                            <Upload className="h-5 w-5 text-blue-600" />
+                      <div className="flex flex-col gap-4">
+                        <div className="relative group">
+                          <input
+                            type="file"
+                            multiple
+                            onChange={handleFileUpload}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            data-testid="input-file-upload"
+                          />
+                          <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors w-fit min-w-[240px]">
+                            <div className="h-8 w-8 bg-blue-50 rounded-full flex items-center justify-center shrink-0">
+                              <Upload className="h-4 w-4 text-blue-600" />
+                            </div>
+                            <div className="text-left">
+                              <p className="text-sm font-medium text-blue-600">Click to upload files</p>
+                              <p className="text-[10px] text-slate-400">PDF, DOC, XLS, Images up to 10MB</p>
+                            </div>
                           </div>
-                          <p className="text-sm font-medium text-blue-600">Click to upload files</p>
-                          <p className="text-xs text-slate-400">PDF, DOC, XLS, Images up to 10MB</p>
-                        </Button>
+                        </div>
+
+                        {/* File List */}
+                        {attachments.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {attachments.map((file, index) => (
+                              <Badge 
+                                key={index} 
+                                variant="secondary" 
+                                className="pl-2 pr-1 py-1 h-7 flex items-center gap-1 bg-slate-100 text-slate-700 border-slate-200"
+                              >
+                                <FileText className="h-3 w-3" />
+                                <span className="max-w-[150px] truncate text-xs">{file.name}</span>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-5 w-5 rounded-full hover:bg-slate-200"
+                                  onClick={() => removeAttachment(index)}
+                                  data-testid={`button-remove-attachment-${index}`}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
