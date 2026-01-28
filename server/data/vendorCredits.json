@@ -99,7 +99,7 @@
     {
       "id": "vc-1769591715122",
       "creditNumber": "VC-00020",
-      "referenceNumber": "",
+      "referenceNumber": "praj120904",
       "vendorId": "10",
       "vendorName": "abc  abc",
       "orderNumber": "",
@@ -116,15 +116,10 @@
           "description": "keyboard at 4500",
           "account": "cost_of_goods",
           "quantity": 9,
-          "rate": "4500",
+          "rate": 4500,
           "tax": "gst_12",
           "taxAmount": 4860,
           "amount": 40500,
-          "billId": "1769591649592",
-          "billNumber": "33",
-          "billDate": "2026-01-28",
-          "balanceDue": 40360.020000000004,
-          "billTotal": 45360,
           "hsnSac": ""
         },
         {
@@ -134,15 +129,10 @@
           "description": "keyboard at 4500",
           "account": "cost_of_goods",
           "quantity": 9,
-          "rate": "4500",
+          "rate": 4500,
           "tax": "gst_12",
           "taxAmount": 4860,
           "amount": 40500,
-          "billId": "1769591646213",
-          "billNumber": "32",
-          "billDate": "2026-01-28",
-          "balanceDue": 45360,
-          "billTotal": 45360,
           "hsnSac": ""
         }
       ],
@@ -160,7 +150,11 @@
       "notes": "",
       "status": "OPEN",
       "createdAt": "2026-01-28T09:15:15.122Z",
-      "updatedAt": "2026-01-28T09:15:15.122Z"
+      "updatedAt": "2026-01-28T10:14:05.066Z",
+      "creditNoteNumber": "VC-00020",
+      "vendorCreditDate": "2026-01-28",
+      "taxAmount": 9720,
+      "total": 90720
     }
   ],
   "nextCreditNumber": 21
