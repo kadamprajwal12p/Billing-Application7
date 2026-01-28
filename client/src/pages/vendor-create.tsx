@@ -1318,7 +1318,7 @@ export default function VendorCreate() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-primary text-primary-foreground"
           data-testid="button-save"
         >
           {saving ? 'Saving...' : 'Save'}
@@ -1355,7 +1355,7 @@ export default function VendorCreate() {
             <Button variant="outline" onClick={() => setShowCreateAccountDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={handleCreateAccount} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={handleCreateAccount} className="bg-primary text-primary-foreground">
               Save and Select
             </Button>
           </DialogFooter>
