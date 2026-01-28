@@ -1083,7 +1083,31 @@ export default function CustomerEdit() {
                       </div>
 
                       <div className="space-y-4">
-                        <h3 className="font-medium text-slate-900">Shipping Address</h3>
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-medium text-slate-900">Shipping Address</h3>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setFormData({
+                                ...formData,
+                                shippingStreet: formData.billingStreet,
+                                shippingCity: formData.billingCity,
+                                shippingState: formData.billingState,
+                                shippingCountry: formData.billingCountry,
+                                shippingPincode: formData.billingPincode,
+                              });
+                              toast({
+                                description: "Billing address copied to shipping address.",
+                              });
+                            }}
+                            className="text-sidebar hover:text-sidebar/80 h-7 text-xs font-medium"
+                            data-testid="button-copy-billing-address"
+                          >
+                            Copy billing address
+                          </Button>
+                        </div>
                         <div className="space-y-2">
                           <Label htmlFor="shippingStreet">Street</Label>
                           <Textarea

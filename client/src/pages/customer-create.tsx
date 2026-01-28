@@ -1676,7 +1676,14 @@ export default function CustomerCreate() {
                         <div className="space-y-4">
                           <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-sm uppercase tracking-wider text-slate-500">Shipping Address</h3>
-                            <Button type="button" variant="link" size="sm" onClick={copyBillingToShipping} className="text-blue-600 h-auto p-0" data-testid="button-copy-billing">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={copyBillingToShipping}
+                              className="text-sidebar hover:text-sidebar/80 h-7 text-xs font-medium"
+                              data-testid="button-copy-billing-address"
+                            >
                               Copy billing address
                             </Button>
                           </div>
