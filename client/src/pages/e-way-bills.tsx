@@ -17,9 +17,7 @@ import {
     ChevronDown,
     MoreHorizontal,
     ArrowUpDown,
-    Download,
-    Settings,
-    RefreshCw
+    Download
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -176,6 +174,8 @@ export default function EWayBills() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState("");
     const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [sortBy, setSortBy] = useState<'date' | 'billNumber' | 'customerName' | 'amount'>('date');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     useEffect(() => {
         fetchEWayBills();
@@ -244,11 +244,30 @@ export default function EWayBills() {
         }
     };
 
-    const filteredEwayBills = ewayBills.filter(bill =>
-        bill.ewayBillNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        bill.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        bill.documentNumber?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredEwayBills = ewayBills
+        .filter(bill =>
+            bill.ewayBillNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            bill.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            bill.documentNumber?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .sort((a, b) => {
+            let comparison = 0;
+            switch (sortBy) {
+                case 'date':
+                    comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+                    break;
+                case 'billNumber':
+                    comparison = (a.ewayBillNumber || '').localeCompare(b.ewayBillNumber || '');
+                    break;
+                case 'customerName':
+                    comparison = (a.customerName || '').localeCompare(b.customerName || '');
+                    break;
+                case 'amount':
+                    comparison = (a.total || 0) - (b.total || 0);
+                    break;
+            }
+            return sortOrder === 'asc' ? comparison : -comparison;
+        });
 
     const { currentPage, totalPages, totalItems, itemsPerPage, paginatedItems, goToPage } = usePagination(filteredEwayBills, 10);
 
@@ -362,10 +381,18 @@ export default function EWayBills() {
                                                 </DropdownMenuSubTrigger>
                                                 <DropdownMenuPortal>
                                                     <DropdownMenuSubContent>
-                                                        <DropdownMenuItem>Date</DropdownMenuItem>
-                                                        <DropdownMenuItem>Bill Number</DropdownMenuItem>
-                                                        <DropdownMenuItem>Customer Name</DropdownMenuItem>
-                                                        <DropdownMenuItem>Amount</DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => { setSortBy('date'); setSortOrder(sortBy === 'date' && sortOrder === 'desc' ? 'asc' : 'desc'); }} data-testid="sort-date">
+                                                            Date {sortBy === 'date' && (sortOrder === 'desc' ? '↓' : '↑')}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => { setSortBy('billNumber'); setSortOrder(sortBy === 'billNumber' && sortOrder === 'desc' ? 'asc' : 'desc'); }} data-testid="sort-bill-number">
+                                                            Bill Number {sortBy === 'billNumber' && (sortOrder === 'desc' ? '↓' : '↑')}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => { setSortBy('customerName'); setSortOrder(sortBy === 'customerName' && sortOrder === 'desc' ? 'asc' : 'desc'); }} data-testid="sort-customer-name">
+                                                            Customer Name {sortBy === 'customerName' && (sortOrder === 'desc' ? '↓' : '↑')}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => { setSortBy('amount'); setSortOrder(sortBy === 'amount' && sortOrder === 'desc' ? 'asc' : 'desc'); }} data-testid="sort-amount">
+                                                            Amount {sortBy === 'amount' && (sortOrder === 'desc' ? '↓' : '↑')}
+                                                        </DropdownMenuItem>
                                                     </DropdownMenuSubContent>
                                                 </DropdownMenuPortal>
                                             </DropdownMenuSub>
@@ -393,13 +420,6 @@ export default function EWayBills() {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem data-testid="menu-export">
                                                 <Download className="mr-2 h-4 w-4" /> Export Bills
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem data-testid="menu-preferences">
-                                                <Settings className="mr-2 h-4 w-4" /> Preferences
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={fetchEWayBills}>
-                                                <RefreshCw className="mr-2 h-4 w-4" /> Refresh List
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
