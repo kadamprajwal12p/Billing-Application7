@@ -352,11 +352,40 @@ export default function PaymentsMade() {
     }
   }, [payments]);
 
-  const filteredPayments = payments.filter(payment =>
-    getPaymentNumberString(payment.paymentNumber).toLowerCase().includes(searchQuery.toLowerCase()) ||
-    String(payment.vendorName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-    String(payment.reference || '').toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPayments = useMemo(() => {
+    let result = payments.filter(payment =>
+      getPaymentNumberString(payment.paymentNumber).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      String(payment.vendorName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      String(payment.reference || '').toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (sortBy) {
+      result = [...result].sort((a, b) => {
+        let valA: any = a[sortBy as keyof typeof a];
+        let valB: any = b[sortBy as keyof typeof b];
+
+        if (sortBy === "date") {
+          valA = new Date(a.paymentDate).getTime();
+          valB = new Date(b.paymentDate).getTime();
+        } else if (sortBy === "amount") {
+          valA = Number(a.paymentAmount);
+          valB = Number(b.paymentAmount);
+        } else if (sortBy === "vendorName") {
+          valA = String(a.vendorName || "").toLowerCase();
+          valB = String(b.vendorName || "").toLowerCase();
+        } else if (sortBy === "paymentNumber") {
+          valA = Number(a.paymentNumber);
+          valB = Number(b.paymentNumber);
+        }
+
+        if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+        if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return result;
+  }, [payments, searchQuery, sortBy, sortOrder]);
 
   const { currentPage, totalPages, totalItems, itemsPerPage, paginatedItems, goToPage } = usePagination(filteredPayments, 10);
 
