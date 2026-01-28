@@ -755,6 +755,60 @@ export default function PaymentsMade() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56 p-1">
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger className={sortBy ? "bg-blue-50" : ""}>
+                          <ArrowUpDown className="mr-2 h-4 w-4" />
+                          <span>Sort by</span>
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent>
+                            <DropdownMenuItem 
+                              onClick={() => handleSort("date")}
+                              className={sortBy === "date" ? "bg-blue-600 text-white" : ""}
+                            >
+                              Date {sortBy === "date" && (sortOrder === "asc" ? "↑" : "↓")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleSort("paymentNumber")}
+                              className={sortBy === "paymentNumber" ? "bg-blue-600 text-white" : ""}
+                            >
+                              Payment Number {sortBy === "paymentNumber" && (sortOrder === "asc" ? "↑" : "↓")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleSort("vendorName")}
+                              className={sortBy === "vendorName" ? "bg-blue-600 text-white" : ""}
+                            >
+                              Vendor Name {sortBy === "vendorName" && (sortOrder === "asc" ? "↑" : "↓")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleSort("amount")}
+                              className={sortBy === "amount" ? "bg-blue-600 text-white" : ""}
+                            >
+                              Amount {sortBy === "amount" && (sortOrder === "asc" ? "↑" : "↓")}
+                            </DropdownMenuItem>
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem data-testid="menu-import" onClick={handleImportPayments}>
+                        <Upload className="mr-2 h-4 w-4" /> Import
+                      </DropdownMenuItem>
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                          <Download className="mr-2 h-4 w-4" />
+                          <span>Export</span>
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent>
+                            <DropdownMenuItem onClick={() => handleExportPayments('excel')}>
+                              Export as Excel (.xlsx)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExportPayments('json')}>
+                              Export as JSON
+                            </DropdownMenuItem>
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem data-testid="menu-preferences" onClick={() => setIsPreferencesOpen(true)}>
                         <Settings className="mr-2 h-4 w-4" /> Preferences
