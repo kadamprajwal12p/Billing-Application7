@@ -1397,7 +1397,7 @@ export default function PurchaseOrders() {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                            {paginatedItems.map((po) => (
+                            {paginatedItems.map((po: any) => (
                               <tr
                                 key={po.id}
                                 className={`hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors ${selectedPO?.id === po.id ? 'bg-sidebar/5 dark:bg-sidebar/20' : ''}`}
