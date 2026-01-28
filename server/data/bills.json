@@ -1,0 +1,473 @@
+{
+  "bills": [
+    {
+      "id": "1769494059874",
+      "organizationId": "1",
+      "billNumber": "31",
+      "orderNumber": "PO-2025-0019",
+      "vendorId": "9",
+      "vendorName": "Cybaem Technology",
+      "vendorAddress": {},
+      "billDate": "2026-01-27",
+      "dueDate": "2026-01-27",
+      "paymentTerms": "Due on Receipt",
+      "reverseCharge": false,
+      "subject": "Bill for Purchase Order #PO-2025-0019",
+      "items": [
+        {
+          "id": "item-1769494057147-0",
+          "itemName": "Keyboard",
+          "description": "keyboard at 4500",
+          "account": "input_cgst",
+          "quantity": 1,
+          "rate": 4500,
+          "tax": "gst_12",
+          "taxAmount": 540,
+          "customerDetails": "none",
+          "amount": 4500
+        }
+      ],
+      "subTotal": 4500,
+      "discountType": "percent",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "TDS",
+      "taxCategory": "none",
+      "taxAmount": 540,
+      "adjustment": 0,
+      "adjustmentDescription": "",
+      "total": 5040,
+      "amountPaid": 540,
+      "balanceDue": 4500,
+      "notes": "",
+      "attachments": [],
+      "status": "PARTIALLY_PAID",
+      "pdfTemplate": "Standard Template",
+      "journalEntries": [],
+      "createdAt": "2026-01-27T06:07:39.874Z",
+      "updatedAt": "2026-01-27T06:58:32.484Z",
+      "createdBy": "Admin User",
+      "activityLogs": [
+        {
+          "id": "1",
+          "timestamp": "2026-01-27T06:07:39.874Z",
+          "action": "created",
+          "description": "Bill created for ₹5,040",
+          "user": "Admin User"
+        },
+        {
+          "id": "2",
+          "timestamp": "2026-01-27T06:58:32.484Z",
+          "action": "credit_applied",
+          "description": "Vendor Credit VC-00018 applied: ₹540.00",
+          "user": "Admin User"
+        }
+      ],
+      "creditsApplied": [
+        {
+          "creditId": "vc-1769493185412",
+          "creditNumber": "VC-00018",
+          "amount": 540,
+          "appliedDate": "2026-01-27"
+        }
+      ]
+    },
+    {
+      "id": "1769492486606",
+      "organizationId": "1",
+      "billNumber": "29",
+      "orderNumber": "PO-2025-0018",
+      "vendorId": "9",
+      "vendorName": "Cybaem Technology",
+      "vendorAddress": {},
+      "billDate": "2026-01-27",
+      "dueDate": "2026-01-27",
+      "paymentTerms": "Due on Receipt",
+      "reverseCharge": false,
+      "subject": "Bill for Purchase Order #PO-2025-0018",
+      "items": [
+        {
+          "id": "item-1769492475348-0",
+          "itemName": "Laptop",
+          "description": "good",
+          "account": "input_igst",
+          "quantity": 1,
+          "rate": 14000,
+          "tax": "gst_18",
+          "taxAmount": 2520,
+          "customerDetails": "none",
+          "amount": 14000
+        }
+      ],
+      "subTotal": 14000,
+      "discountType": "percent",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "TDS",
+      "taxCategory": "none",
+      "taxAmount": 2520,
+      "adjustment": 0,
+      "adjustmentDescription": "",
+      "total": 16520,
+      "amountPaid": 16520,
+      "balanceDue": 0,
+      "notes": "",
+      "attachments": [],
+      "status": "PAID",
+      "pdfTemplate": "Standard Template",
+      "journalEntries": [],
+      "createdAt": "2026-01-27T05:41:26.606Z",
+      "updatedAt": "2026-01-27T05:45:52.179Z",
+      "createdBy": "Admin User",
+      "activityLogs": [
+        {
+          "id": "1",
+          "timestamp": "2026-01-27T05:41:26.606Z",
+          "action": "created",
+          "description": "Bill created for ₹16,520",
+          "user": "Admin User"
+        },
+        {
+          "id": "2",
+          "timestamp": "2026-01-27T05:42:22.502Z",
+          "action": "payment",
+          "description": "Payment of ₹520 recorded",
+          "user": "Admin User"
+        },
+        {
+          "id": "1769492752184",
+          "timestamp": "2026-01-27T05:45:52.179Z",
+          "action": "payment",
+          "description": "Payment of ₹16,000 recorded via PM-00070",
+          "user": "System"
+        }
+      ],
+      "paymentsRecorded": [
+        {
+          "paymentId": "direct-1769492542502",
+          "paymentNumber": "PM-00069",
+          "amount": 520,
+          "date": "2026-01-27",
+          "mode": "Cash"
+        }
+      ]
+    },
+    {
+      "id": "1769492475062",
+      "organizationId": "1",
+      "billNumber": "28",
+      "purchaseOrderId": "1769492404465",
+      "orderNumber": "PO-2025-0018",
+      "vendorId": "9",
+      "vendorName": "Cybaem Technology",
+      "vendorAddress": {},
+      "billDate": "2026-01-27",
+      "dueDate": "2026-01-27",
+      "paymentTerms": "Due on Receipt",
+      "reverseCharge": false,
+      "subject": "Bill for PO# PO-2025-0018",
+      "items": [
+        {
+          "id": "1",
+          "itemId": "1768909122993",
+          "itemName": "Laptop",
+          "description": "good",
+          "account": "input_igst",
+          "quantity": 1,
+          "rate": 14000,
+          "tax": "gst_18",
+          "taxAmount": 2520,
+          "amount": 16520
+        }
+      ],
+      "subTotal": 14000,
+      "discountType": "percent",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "TDS",
+      "taxCategory": "none",
+      "taxAmount": 2520,
+      "adjustment": 0,
+      "adjustmentDescription": "",
+      "total": 16520,
+      "amountPaid": 16520,
+      "balanceDue": 0,
+      "notes": "",
+      "attachments": [],
+      "status": "PAID",
+      "pdfTemplate": "Standard Template",
+      "createdAt": "2026-01-27T05:41:15.061Z",
+      "updatedAt": "2026-01-27T06:12:14.857Z",
+      "createdBy": "Admin User",
+      "activityLogs": [
+        {
+          "id": "1",
+          "timestamp": "2026-01-27T05:41:15.061Z",
+          "action": "created",
+          "description": "Bill created from Purchase Order PO# PO-2025-0018",
+          "user": "Admin User"
+        },
+        {
+          "id": "1769492923687",
+          "timestamp": "2026-01-27T05:48:43.685Z",
+          "action": "payment",
+          "description": "Payment of ₹789 recorded via PM-00071",
+          "user": "System"
+        },
+        {
+          "id": "1769493051886",
+          "timestamp": "2026-01-27T05:50:51.885Z",
+          "action": "payment",
+          "description": "Payment of ₹231.99 recorded via PM-00072",
+          "user": "System"
+        },
+        {
+          "id": "4",
+          "timestamp": "2026-01-27T05:56:11.299Z",
+          "action": "credit_applied",
+          "description": "Vendor Credit VC-00018 applied: ₹1499.00",
+          "user": "Admin User"
+        },
+        {
+          "id": "5",
+          "timestamp": "2026-01-27T05:59:53.227Z",
+          "action": "payment",
+          "description": "Payment of ₹14,021 recorded",
+          "user": "Admin User"
+        },
+        {
+          "id": "6",
+          "timestamp": "2026-01-27T06:02:58.670Z",
+          "action": "credit_applied",
+          "description": "Vendor Credit VC-00018 applied: ₹500.00",
+          "user": "Admin User"
+        },
+        {
+          "id": "7",
+          "timestamp": "2026-01-27T06:12:14.857Z",
+          "action": "payment",
+          "description": "Payment of ₹500 recorded",
+          "user": "Admin User"
+        }
+      ],
+      "creditsApplied": [
+        {
+          "creditId": "vc-1769493185412",
+          "creditNumber": "VC-00018",
+          "amount": 1499,
+          "appliedDate": "2026-01-27"
+        },
+        {
+          "creditId": "vc-1769493185412",
+          "creditNumber": "VC-00018",
+          "amount": 500,
+          "appliedDate": "2026-01-27"
+        }
+      ],
+      "paymentsRecorded": [
+        {
+          "paymentId": "direct-1769493593227",
+          "paymentNumber": "PM-00074",
+          "amount": 14021,
+          "date": "2026-01-27",
+          "mode": "Cash"
+        },
+        {
+          "paymentId": "direct-1769494334857",
+          "paymentNumber": "PM-00075",
+          "amount": 500,
+          "date": "2026-01-27",
+          "mode": "Cash"
+        }
+      ]
+    },
+    {
+      "id": "1769152029404",
+      "organizationId": "1",
+      "billNumber": "27",
+      "orderNumber": "PO-2025-0017",
+      "vendorId": "8",
+      "vendorName": "prajwal kadam",
+      "vendorAddress": {},
+      "billDate": "2026-01-23",
+      "dueDate": "2026-01-23",
+      "paymentTerms": "Due on Receipt",
+      "reverseCharge": false,
+      "subject": "Bill for Purchase Order #PO-2025-0017",
+      "items": [
+        {
+          "id": "item-1769152025748-0",
+          "itemName": "mouse",
+          "description": "best product with best price",
+          "account": "input_sgst",
+          "quantity": 5,
+          "rate": 4000,
+          "tax": "IGST18",
+          "taxAmount": 3600,
+          "customerDetails": "none",
+          "amount": 20000
+        },
+        {
+          "id": "1769491711012",
+          "itemName": "Keyboard",
+          "description": "keyboard at 4500",
+          "account": "input_igst",
+          "quantity": 1,
+          "rate": 4500,
+          "tax": "GST12",
+          "taxAmount": 540,
+          "customerDetails": "none",
+          "amount": 4500
+        }
+      ],
+      "subTotal": 24500,
+      "discountType": "percent",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "TDS",
+      "taxCategory": "none",
+      "taxAmount": 4140,
+      "adjustment": 0,
+      "adjustmentDescription": "",
+      "total": 28640,
+      "amountPaid": 28640,
+      "balanceDue": 0,
+      "notes": "",
+      "attachments": [],
+      "status": "PAID",
+      "pdfTemplate": "Standard Template",
+      "journalEntries": [],
+      "createdAt": "2026-01-23T07:07:09.404Z",
+      "updatedAt": "2026-01-27T05:52:08.284Z",
+      "createdBy": "Admin User",
+      "activityLogs": [
+        {
+          "id": "1",
+          "timestamp": "2026-01-23T07:07:09.404Z",
+          "action": "created",
+          "description": "Bill created for ₹23,600",
+          "user": "Admin User"
+        },
+        {
+          "id": "2",
+          "timestamp": "2026-01-23T07:08:42.934Z",
+          "action": "payment",
+          "description": "Payment of ₹20,000 recorded",
+          "user": "Admin User"
+        },
+        {
+          "id": "3",
+          "timestamp": "2026-01-27T05:29:21.990Z",
+          "action": "updated",
+          "description": "Bill updated. New total: ₹28640.00, Balance due: ₹8640.00",
+          "user": "Admin User"
+        },
+        {
+          "id": "4",
+          "timestamp": "2026-01-27T05:52:08.284Z",
+          "action": "payment",
+          "description": "Payment of ₹8,640 recorded",
+          "user": "Admin User"
+        }
+      ],
+      "paymentsRecorded": [
+        {
+          "paymentId": "direct-1769152122935",
+          "paymentNumber": "PM-00068",
+          "amount": 20000,
+          "date": "2026-01-23",
+          "mode": "Cash"
+        },
+        {
+          "paymentId": "direct-1769493128284",
+          "paymentNumber": "PM-00073",
+          "amount": 8640,
+          "date": "2026-01-27",
+          "mode": "Cash"
+        }
+      ],
+      "tcsType": "TCS",
+      "tcsCategory": "none",
+      "tcsValue": 0,
+      "tdsValue": 0,
+      "tcsAmount": 0,
+      "tdsAmount": 0,
+      "creditsApplied": []
+    }
+  ],
+  "nextBillNumber": 32,
+  "accounts": [
+    {
+      "id": "1",
+      "name": "Cost of Goods Sold",
+      "type": "expense"
+    },
+    {
+      "id": "2",
+      "name": "Office Supplies",
+      "type": "expense"
+    },
+    {
+      "id": "3",
+      "name": "Software",
+      "type": "expense"
+    },
+    {
+      "id": "4",
+      "name": "Professional Services",
+      "type": "expense"
+    },
+    {
+      "id": "5",
+      "name": "Utilities",
+      "type": "expense"
+    },
+    {
+      "id": "6",
+      "name": "Rent",
+      "type": "expense"
+    },
+    {
+      "id": "7",
+      "name": "Travel Expense",
+      "type": "expense"
+    },
+    {
+      "id": "8",
+      "name": "Marketing",
+      "type": "expense"
+    }
+  ],
+  "taxes": [
+    {
+      "id": "1",
+      "name": "IGST18",
+      "rate": 18
+    },
+    {
+      "id": "2",
+      "name": "CGST9",
+      "rate": 9
+    },
+    {
+      "id": "3",
+      "name": "SGST9",
+      "rate": 9
+    },
+    {
+      "id": "4",
+      "name": "GST5",
+      "rate": 5
+    },
+    {
+      "id": "5",
+      "name": "GST12",
+      "rate": 12
+    },
+    {
+      "id": "6",
+      "name": "GST28",
+      "rate": 28
+    }
+  ]
+}
