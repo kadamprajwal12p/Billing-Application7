@@ -1698,11 +1698,6 @@ export default function Bills() {
     setPreferencesDialogOpen(true);
   };
 
-  // Reset column width handler
-  const handleResetColumnWidth = () => {
-    toast({ title: "Column widths reset to default" });
-  };
-
   const toggleSelectBill = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (selectedBills.includes(id)) {
@@ -1933,9 +1928,6 @@ export default function Bills() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => fetchBills()}>
                       <RefreshCw className="mr-2 h-4 w-4" /> Refresh List
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleResetColumnWidth()}>
-                      <Grid3X3 className="mr-2 h-4 w-4" /> Reset Column Width
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
