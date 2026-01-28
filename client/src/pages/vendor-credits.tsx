@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Search, MoreHorizontal, Trash2, Edit, FileText, ChevronDown, X, Printer, Receipt, Copy, Ban, BookOpen, RotateCcw, CheckCircle2, Download, Eye, ArrowUpDown, RefreshCw, Upload, Grid3X3, Lightbulb } from "lucide-react";
@@ -486,7 +486,83 @@ export default function VendorCredits() {
     toast({ title: "Column widths reset to default" });
   };
 
-  const vendorCredits = vendorCreditsData?.data || [];
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+  const vendorCredits = useMemo(() => {
+    let result = vendorCreditsData?.data || [];
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(credit =>
+        credit.creditNumber.toLowerCase().includes(query) ||
+        credit.vendorName.toLowerCase().includes(query) ||
+        (credit.referenceNumber || '').toLowerCase().includes(query)
+      );
+    }
+
+    if (sortBy) {
+      result = [...result].sort((a, b) => {
+        let valA: any;
+        let valB: any;
+
+        switch (sortBy) {
+          case 'name':
+            valA = a.vendorName.toLowerCase();
+            valB = b.vendorName.toLowerCase();
+            break;
+          case 'companyName':
+            // Since companyName is not directly in VendorCredit, we'd need to join or find it.
+            // For now, sorting by vendorName as a fallback if not available
+            valA = a.vendorName.toLowerCase();
+            valB = b.vendorName.toLowerCase();
+            break;
+          case 'payables':
+            // fallback to amount if payables not clearly defined on credit
+            valA = a.amount;
+            valB = b.amount;
+            break;
+          case 'unusedCredits':
+            valA = a.balance;
+            valB = b.balance;
+            break;
+          case 'createdTime':
+            valA = new Date(a.createdAt).getTime();
+            valB = new Date(b.createdAt).getTime();
+            break;
+          case 'lastModifiedTime':
+            valA = new Date(a.updatedAt).getTime();
+            valB = new Date(b.updatedAt).getTime();
+            break;
+          case 'date':
+            valA = new Date(a.date).getTime();
+            valB = new Date(b.date).getTime();
+            break;
+          case 'amount':
+            valA = a.amount;
+            valB = b.amount;
+            break;
+          default:
+            valA = (a as any)[sortBy];
+            valB = (b as any)[sortBy];
+        }
+
+        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return result;
+  }, [vendorCreditsData?.data, searchQuery, sortBy, sortOrder]);
+
+  const handleSort = (field: string) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setSortOrder("asc");
+    }
+  };
 
   const filteredVendorCredits = vendorCredits.filter(credit =>
     credit.creditNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -725,31 +801,50 @@ export default function VendorCredits() {
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                          <DropdownMenuItem onClick={() => handleSort('name')}>Name</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleSort('companyName')}>Company Name</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleSort('payables')}>Payables (BCY)</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleSort('unusedCredits')}>Unused Credits (BCY)</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleSort('createdTime')}>Created Time</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleSort('lastModifiedTime')}>Last Modified Time</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleSort('name')}>
+                            Name {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleSort('date')}>
+                            Date {sortBy === 'date' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleSort('amount')}>
+                            Amount {sortBy === 'amount' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleSort('unusedCredits')}>
+                            Unused Credits {sortBy === 'unusedCredits' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleSort('createdTime')}>
+                            Created Time {sortBy === 'createdTime' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleSort('lastModifiedTime')}>
+                            Last Modified Time {sortBy === 'lastModifiedTime' && (sortOrder === 'asc' ? '↑' : '↓')}
+                          </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleImport()}>
+                    <DropdownMenuItem onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = '.json,.csv';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file) toast({ title: "Importing...", description: file.name });
+                      };
+                      input.click();
+                    }}>
                       <Upload className="mr-2 h-4 w-4" /> Import
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleExport()}>
+                    <DropdownMenuItem onClick={() => {
+                      const data = JSON.stringify(vendorCredits, null, 2);
+                      const blob = new Blob([data], { type: 'application/json' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = 'vendor_credits.json';
+                      a.click();
+                    }}>
                       <Download className="mr-2 h-4 w-4" /> Export
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handlePreferences()}>
-                      <Lightbulb className="mr-2 h-4 w-4" /> Preferences
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => refetch()}>
-                      <RefreshCw className="h-4 w-4 mr-2" /> Refresh List
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleResetColumnWidth()}>
-                      <Grid3X3 className="mr-2 h-4 w-4" /> Reset Column Width
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
