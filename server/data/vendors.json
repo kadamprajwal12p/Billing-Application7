@@ -139,7 +139,67 @@
       "unusedCredits": 0,
       "createdAt": "2026-01-27T05:25:11.810Z",
       "updatedAt": "2026-01-27T05:25:11.811Z"
+    },
+    {
+      "id": "10",
+      "organizationId": "1",
+      "salutation": "Mrs.",
+      "firstName": "abc ",
+      "lastName": "abc",
+      "companyName": "",
+      "displayName": "abc  abc",
+      "email": "",
+      "workPhone": "",
+      "mobile": "",
+      "gstTreatment": "Registered Business - Regular",
+      "sourceOfSupply": "[AP] - Andhra Pradesh",
+      "pan": "",
+      "expenseAccount": "Cost of Goods Sold",
+      "msmeRegistered": false,
+      "msmeRegistrationType": "",
+      "msmeRegistrationNumber": "",
+      "currency": "INR",
+      "openingBalance": 0,
+      "paymentTerms": "Due on Receipt",
+      "tds": "",
+      "billingAddress": {
+        "attention": "",
+        "countryRegion": "",
+        "street1": "",
+        "street2": "",
+        "city": "",
+        "state": "",
+        "pinCode": "",
+        "phone": "",
+        "faxNumber": ""
+      },
+      "shippingAddress": {
+        "attention": "",
+        "countryRegion": "",
+        "street1": "",
+        "street2": "",
+        "city": "",
+        "state": "",
+        "pinCode": "",
+        "phone": "",
+        "faxNumber": ""
+      },
+      "bankDetails": {
+        "accountHolderName": "",
+        "bankName": "",
+        "accountNumber": "",
+        "ifscCode": "",
+        "swiftCode": "",
+        "branchName": ""
+      },
+      "remarks": "",
+      "contactPersons": [],
+      "status": "active",
+      "payables": 0,
+      "unusedCredits": 0,
+      "createdAt": "2026-01-28T08:13:24.491Z",
+      "updatedAt": "2026-01-28T08:13:24.491Z"
     }
   ],
-  "nextVendorId": 10
+  "nextVendorId": 11
 }
