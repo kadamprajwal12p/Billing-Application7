@@ -1,6 +1,79 @@
 {
   "purchaseOrders": [
     {
+      "id": "1769591639138",
+      "purchaseOrderNumber": "PO-2025-0020",
+      "referenceNumber": "",
+      "date": "2026-01-28",
+      "deliveryDate": "",
+      "vendorId": "10",
+      "vendorName": "abc  abc",
+      "vendorAddress": {},
+      "deliveryAddress": {
+        "attention": "",
+        "street1": "",
+        "street2": "",
+        "city": "",
+        "state": "",
+        "pinCode": "",
+        "countryRegion": "India"
+      },
+      "deliveryAddressType": "organization",
+      "paymentTerms": "Due on Receipt",
+      "shipmentPreference": "",
+      "reverseCharge": false,
+      "items": [
+        {
+          "id": "1",
+          "itemId": "1768892876560",
+          "itemName": "Keyboard",
+          "description": "keyboard at 4500",
+          "account": "",
+          "quantity": 9,
+          "rate": 4500,
+          "tax": "gst_12",
+          "taxAmount": 4860,
+          "amount": 45360
+        }
+      ],
+      "subTotal": 40500,
+      "discountType": "percent",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "TDS",
+      "taxCategory": "none",
+      "taxAmount": 4860,
+      "adjustment": 0,
+      "adjustmentDescription": "",
+      "total": 45360,
+      "notes": "",
+      "termsAndConditions": "",
+      "attachments": [],
+      "status": "ISSUED",
+      "receiveStatus": "YET TO BE RECEIVED",
+      "billedStatus": "BILLED",
+      "pdfTemplate": "Standard Template",
+      "createdAt": "2026-01-28T09:13:59.138Z",
+      "updatedAt": "2026-01-28T09:14:06.212Z",
+      "createdBy": "Admin User",
+      "activityLogs": [
+        {
+          "id": "1",
+          "timestamp": "2026-01-28T09:13:59.138Z",
+          "action": "created",
+          "description": "Purchase Order created for ₹45,360",
+          "user": "Admin User"
+        },
+        {
+          "id": "2",
+          "timestamp": "2026-01-28T09:14:06.212Z",
+          "action": "converted_to_bill",
+          "description": "Purchase Order converted to Bill",
+          "user": "Admin User"
+        }
+      ]
+    },
+    {
       "id": "1769494023561",
       "purchaseOrderNumber": "PO-2025-0019",
       "referenceNumber": "123",
@@ -319,5 +392,5 @@
       ]
     }
   ],
-  "nextPurchaseOrderNumber": 20
+  "nextPurchaseOrderNumber": 21
 }

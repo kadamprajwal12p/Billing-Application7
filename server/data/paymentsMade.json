@@ -255,7 +255,39 @@
       "status": "PAID",
       "createdAt": "2026-01-27T06:12:14.857Z",
       "updatedAt": "2026-01-27T06:12:14.857Z"
+    },
+    {
+      "id": "pm-1769591683237",
+      "organizationId": "1",
+      "paymentNumber": "PM-00076",
+      "vendorId": "10",
+      "vendorName": "abc  abc",
+      "gstTreatment": "Registered Business - Regular",
+      "sourceOfSupply": "[AP] - Andhra Pradesh",
+      "destinationOfSupply": "[AP] - Andhra Pradesh",
+      "descriptionOfSupply": "",
+      "paymentAmount": 4999.98,
+      "reverseCharge": false,
+      "tds": "",
+      "paymentDate": "2026-01-28",
+      "paymentMode": "cash",
+      "paidThrough": "petty_cash",
+      "depositTo": "prepaid_expenses",
+      "reference": "",
+      "notes": "",
+      "billPayments": {
+        "1769591649592": {
+          "billId": "1769591649592",
+          "billNumber": "33",
+          "billAmount": 45360,
+          "amountPaid": 4999.98
+        }
+      },
+      "paymentType": "bill_payment",
+      "status": "PAID",
+      "createdAt": "2026-01-28T09:14:43.237Z",
+      "updatedAt": "2026-01-28T09:14:43.237Z"
     }
   ],
-  "nextPaymentNumber": 76
+  "nextPaymentNumber": 77
 }

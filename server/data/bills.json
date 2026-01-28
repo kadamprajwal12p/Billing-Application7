@@ -1,6 +1,127 @@
 {
   "bills": [
     {
+      "id": "1769591649592",
+      "organizationId": "1",
+      "billNumber": "33",
+      "orderNumber": "PO-2025-0020",
+      "vendorId": "10",
+      "vendorName": "abc  abc",
+      "vendorAddress": {},
+      "billDate": "2026-01-28",
+      "dueDate": "2026-01-28",
+      "paymentTerms": "Due on Receipt",
+      "reverseCharge": false,
+      "subject": "Bill for Purchase Order #PO-2025-0020",
+      "items": [
+        {
+          "id": "item-1769591646775-0",
+          "itemName": "Keyboard",
+          "description": "keyboard at 4500",
+          "account": "Cost of Goods Sold",
+          "quantity": 9,
+          "rate": 4500,
+          "tax": "gst_12",
+          "taxAmount": 4860,
+          "customerDetails": "none",
+          "amount": 40500
+        }
+      ],
+      "subTotal": 40500,
+      "discountType": "percent",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "TDS",
+      "taxCategory": "none",
+      "taxAmount": 4860,
+      "adjustment": 0,
+      "adjustmentDescription": "",
+      "total": 45360,
+      "amountPaid": 4999.98,
+      "balanceDue": 0,
+      "notes": "",
+      "attachments": [],
+      "status": "PARTIALLY_PAID",
+      "pdfTemplate": "Standard Template",
+      "journalEntries": [],
+      "createdAt": "2026-01-28T09:14:09.592Z",
+      "updatedAt": "2026-01-28T09:15:15.122Z",
+      "createdBy": "Admin User",
+      "activityLogs": [
+        {
+          "id": "1",
+          "timestamp": "2026-01-28T09:14:09.592Z",
+          "action": "created",
+          "description": "Bill created for ₹45,360",
+          "user": "Admin User"
+        },
+        {
+          "id": "1769591683238",
+          "timestamp": "2026-01-28T09:14:43.237Z",
+          "action": "payment",
+          "description": "Payment of ₹4,999.98 recorded via PM-00076",
+          "user": "System"
+        }
+      ]
+    },
+    {
+      "id": "1769591646213",
+      "organizationId": "1",
+      "billNumber": "32",
+      "purchaseOrderId": "1769591639138",
+      "orderNumber": "PO-2025-0020",
+      "vendorId": "10",
+      "vendorName": "abc  abc",
+      "vendorAddress": {},
+      "billDate": "2026-01-28",
+      "dueDate": "2026-01-28",
+      "paymentTerms": "Due on Receipt",
+      "reverseCharge": false,
+      "subject": "Bill for PO# PO-2025-0020",
+      "items": [
+        {
+          "id": "1",
+          "itemId": "1768892876560",
+          "itemName": "Keyboard",
+          "description": "keyboard at 4500",
+          "account": "",
+          "quantity": 9,
+          "rate": 4500,
+          "tax": "gst_12",
+          "taxAmount": 4860,
+          "amount": 45360
+        }
+      ],
+      "subTotal": 40500,
+      "discountType": "percent",
+      "discountValue": 0,
+      "discountAmount": 0,
+      "taxType": "TDS",
+      "taxCategory": "none",
+      "taxAmount": 4860,
+      "adjustment": 0,
+      "adjustmentDescription": "",
+      "total": 45360,
+      "amountPaid": 0,
+      "balanceDue": 4860,
+      "notes": "",
+      "attachments": [],
+      "status": "OPEN",
+      "pdfTemplate": "Standard Template",
+      "createdAt": "2026-01-28T09:14:06.212Z",
+      "updatedAt": "2026-01-28T09:15:15.122Z",
+      "createdBy": "Admin User",
+      "activityLogs": [
+        {
+          "id": "1",
+          "timestamp": "2026-01-28T09:14:06.212Z",
+          "action": "created",
+          "description": "Bill created from Purchase Order PO# PO-2025-0020",
+          "user": "Admin User"
+        }
+      ]
+    },
+    {
       "id": "1769494059874",
       "organizationId": "1",
       "billNumber": "31",
@@ -395,7 +516,7 @@
       "creditsApplied": []
     }
   ],
-  "nextBillNumber": 32,
+  "nextBillNumber": 34,
   "accounts": [
     {
       "id": "1",

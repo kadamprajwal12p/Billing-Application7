@@ -832,9 +832,6 @@ export default function PaymentsMade() {
                             <DropdownMenuItem onClick={() => handleExportPayments('excel')}>
                               Export as Excel (.xlsx)
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleExportPayments('json')}>
-                              Export as JSON
-                            </DropdownMenuItem>
                           </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                       </DropdownMenuSub>
