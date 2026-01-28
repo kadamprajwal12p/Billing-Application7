@@ -501,29 +501,6 @@ export default function QuoteCreatePage() {
           <h1 className="text-xl font-bold text-slate-900 font-display">New Quote</h1>
         </div>
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            onClick={() => setLocation('/quotes')}
-            className="h-9 font-bold font-display border-slate-200 hover:bg-slate-50 transition-all"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => handleSubmit('DRAFT')}
-            disabled={loading}
-            className="h-9 bg-sidebar hover:bg-sidebar/90 text-white font-bold font-display px-8 shadow-sm hover:shadow-md transition-all"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Save as Draft
-          </Button>
-          <Button
-            onClick={() => handleSubmit('SENT')}
-            disabled={loading}
-            className="h-9 bg-sidebar hover:bg-sidebar/90 text-white font-bold font-display px-8 shadow-sm hover:shadow-md transition-all"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Save and Send
-          </Button>
         </div>
       </div>
 
