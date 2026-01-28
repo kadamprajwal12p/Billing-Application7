@@ -34,6 +34,24 @@ export const exportToExcel = async (data: any[], filename: string, sheetName: st
 };
 
 /**
+ * Transforms Expenses list data for Excel export
+ */
+export const transformExpenseListForExcel = (expenses: any[]) => {
+    return expenses.map(expense => ({
+        'Date': expense.date ? new Date(expense.date).toLocaleDateString('en-IN') : '-',
+        'Expense Number': expense.expenseNumber || '-',
+        'Account': expense.expenseAccount || '-',
+        'Vendor': expense.vendorName || '-',
+        'Paid Through': expense.paidThrough || '-',
+        'Customer': expense.customerName || '-',
+        'Amount': expense.amount || 0,
+        'Currency': expense.currency || 'INR',
+        'Status': expense.status || '-',
+        'Created At': expense.createdAt ? new Date(expense.createdAt).toLocaleString('en-IN') : '-'
+    }));
+};
+
+/**
  * Transforms Purchase Order list data for Excel export
  */
 export const transformPOListForExcel = (purchaseOrders: any[]) => {

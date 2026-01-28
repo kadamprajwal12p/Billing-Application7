@@ -81,6 +81,7 @@ import { usePagination } from "@/hooks/use-pagination";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
 import ExpenseDetailPanel from "@/modules/expenses/components/ExpenseDetailPanel";
+import { exportToExcel, transformExpenseListForExcel } from "@/lib/excel-utils";
 import { TablePagination } from "@/components/table-pagination";
 
 interface Expense {
@@ -301,9 +302,11 @@ export default function Expenses() {
 
   const handleExport = () => {
     toast({
-      title: "Export Started",
-      description: "Preparing expenses list for export...",
+      title: "Exporting...",
+      description: "Preparing Excel file for all expenses.",
     });
+    const transformedData = transformExpenseListForExcel(filteredExpenses);
+    exportToExcel(transformedData, 'Expenses_List', 'Expenses');
   };
 
   const handleResetColumnWidth = () => {
