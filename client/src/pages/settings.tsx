@@ -14,6 +14,7 @@ export default function Settings() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const signatureInputRef = useRef<HTMLInputElement>(null);
+  const iconInputRef = useRef<HTMLInputElement>(null);
   const [, setLocation] = useLocation();
   const { data: branding, isLoading, refetch: refetchBranding } = useBranding();
   const [isUploading, setIsUploading] = useState(false);
@@ -250,6 +251,122 @@ export default function Settings() {
     }
   };
 
+  const handleIconUpload = async (file: File) => {
+    try {
+      setIsUploading(true);
+
+      // Validate file type
+      const fileExt = file.name.split(".").pop()?.toLowerCase() || "";
+      if (!SUPPORTED_FORMATS.includes(fileExt)) {
+        toast({
+          title: "Invalid Format",
+          description: `Supported formats: ${SUPPORTED_FORMATS.join(", ").toUpperCase()}`,
+          variant: "destructive",
+        });
+        setIsUploading(false);
+        return;
+      }
+
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        toast({
+          title: "File Too Large",
+          description: "Maximum file size is 1 MB",
+          variant: "destructive",
+        });
+        setIsUploading(false);
+        return;
+      }
+
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const base64 = (e.target?.result as string).split(",")[1];
+          const response = await fetch("/api/branding/icon", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              iconBase64: base64,
+              fileName: file.name,
+              fileSize: file.size,
+            }),
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            toast({
+              title: "Success",
+              description: "Icon uploaded successfully",
+            });
+            await refetchBranding();
+          } else {
+            toast({
+              title: "Error",
+              description: data.message || "Failed to upload icon",
+              variant: "destructive",
+            });
+          }
+        } catch (error) {
+          toast({
+            title: "Error",
+            description: "Failed to upload icon",
+            variant: "destructive",
+          });
+        } finally {
+          setIsUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process icon",
+        variant: "destructive",
+      });
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveIcon = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to remove the icon? This cannot be undone."
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      setIsUploading(true);
+      const response = await fetch("/api/branding/icon", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Icon removed successfully",
+        });
+        await refetchBranding();
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || "Failed to remove icon",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to remove icon",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       handleLogoUpload(e.target.files[0]);
@@ -259,6 +376,12 @@ export default function Settings() {
   const handleSignatureInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       handleSignatureUpload(e.target.files[0]);
+    }
+  };
+
+  const handleIconInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      handleIconUpload(e.target.files[0]);
     }
   };
 
@@ -387,6 +510,67 @@ export default function Settings() {
           </CardContent>
         </Card>
 
+        {/* Organization Icon Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Organization Icon (Sidebar)</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex gap-6">
+              {/* Icon Preview */}
+              <div className="flex-shrink-0">
+                {branding?.icon?.url ? (
+                  <div className="w-20 h-20 rounded-md border border-slate-200 overflow-hidden bg-slate-50 flex items-center justify-center">
+                    <img
+                      src={branding.icon.url}
+                      alt="Organization Icon"
+                      className="max-w-full max-h-full object-contain"
+                      data-testid="img-organization-icon"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded-md border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center">
+                    <span className="text-xs text-slate-400">No icon</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Icon Details & Upload */}
+              <div className="flex-1 space-y-4">
+                <div>
+                  <p className="text-sm text-slate-600 mb-2">
+                    This icon will be displayed in the application sidebar representing your organization.
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => iconInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="gap-2"
+                    data-testid="button-upload-icon"
+                  >
+                    <Upload className="h-4 w-4" />
+                    {branding?.icon ? "Update Icon" : "Upload Icon"}
+                  </Button>
+                  {branding?.icon && (
+                    <Button
+                      variant="outline"
+                      onClick={handleRemoveIcon}
+                      disabled={isUploading}
+                      className="gap-2"
+                      data-testid="button-remove-icon"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Organization Signature Card */}
         <Card>
           <CardHeader>
@@ -496,6 +680,14 @@ export default function Settings() {
         onChange={handleSignatureInputChange}
         className="hidden"
         data-testid="input-file-signature"
+      />
+      <input
+        ref={iconInputRef}
+        type="file"
+        accept={SUPPORTED_FORMATS.map((f) => `.${f}`).join(",")}
+        onChange={handleIconInputChange}
+        className="hidden"
+        data-testid="input-file-icon"
       />
 
       {/* Sticky Footer */}

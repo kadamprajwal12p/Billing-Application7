@@ -7332,7 +7332,7 @@ export async function registerRoutes(
   function readBranding() {
     ensureDataDir();
     if (!fs.existsSync(BRANDING_FILE)) {
-      const defaultBranding = { id: "default", logo: null, signature: null, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      const defaultBranding = { id: "default", logo: null, signature: null, icon: null, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
       fs.writeFileSync(BRANDING_FILE, JSON.stringify(defaultBranding, null, 2));
       return defaultBranding;
     }
@@ -7487,6 +7487,74 @@ export async function registerRoutes(
       res.json({ success: true, data: branding });
     } catch (error) {
       res.status(500).json({ success: false, message: "Failed to delete signature" });
+    }
+  });
+
+  app.post("/api/branding/icon", (req: Request, res: Response) => {
+    try {
+      const { iconBase64, fileName, fileSize } = req.body;
+
+      if (!iconBase64 || !fileName) {
+        return res.status(400).json({ success: false, message: "Icon data and filename are required" });
+      }
+
+      const maxSize = 1024 * 1024; // 1MB
+      if (fileSize > maxSize) {
+        return res.status(400).json({ success: false, message: "File size exceeds 1MB limit" });
+      }
+
+      const supportedFormats = ["jpg", "jpeg", "png", "gif", "bmp"];
+      const fileExt = fileName.split(".").pop()?.toLowerCase() || "";
+      if (!supportedFormats.includes(fileExt)) {
+        return res.status(400).json({ success: false, message: "Unsupported file format" });
+      }
+
+      const uploadsDir = path.join(__dirname, "uploads", "icons");
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const timestamp = Date.now();
+      const newFileName = `icon-${timestamp}.${fileExt}`;
+      const filePath = path.join(uploadsDir, newFileName);
+
+      const buffer = Buffer.from(iconBase64, "base64");
+      fs.writeFileSync(filePath, buffer);
+
+      const branding = readBranding();
+      branding.icon = {
+        url: `/uploads/icons/${newFileName}`,
+        fileName: fileName,
+        uploadedAt: new Date().toISOString(),
+        fileSize: fileSize
+      };
+      branding.updatedAt = new Date().toISOString();
+      writeBranding(branding);
+
+      res.json({ success: true, data: branding });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Failed to upload icon" });
+    }
+  });
+
+  app.delete("/api/branding/icon", (req: Request, res: Response) => {
+    try {
+      const branding = readBranding();
+
+      if (branding.icon && branding.icon.url) {
+        const filePath = path.join(__dirname, branding.icon.url.replace("/uploads/icons/", "uploads/icons/"));
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      }
+
+      branding.icon = null;
+      branding.updatedAt = new Date().toISOString();
+      writeBranding(branding);
+
+      res.json({ success: true, data: branding });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Failed to delete icon" });
     }
   });
 

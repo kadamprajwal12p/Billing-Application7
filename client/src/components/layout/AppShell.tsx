@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useOrganization } from "@/context/OrganizationContext";
+import { useBranding } from "@/hooks/use-branding";
 import {
   ChevronsUpDown,
   Check,
@@ -142,6 +143,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const { organizations, currentOrganization, setCurrentOrganization } = useOrganization();
+  const { data: branding } = useBranding();
 
   // ... NavItem definitions
 
@@ -152,10 +154,23 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-full justify-between h-14 px-3 border-sidebar-border/50 bg-sidebar/50 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground border-sidebar-border">
               <div className="flex items-center gap-3 text-left">
-                <div className="h-8 w-8 rounded-lg bg-sidebar-primary flex items-center justify-center overflow-hidden shadow-md ring-2 ring-sidebar-primary/20">
-                  <span className="font-display font-bold text-sidebar-primary-foreground text-lg">
-                    {currentOrganization?.name.charAt(0).toUpperCase() || "B"}
-                  </span>
+                <div className={cn(
+                  "h-8 w-8 rounded-lg flex items-center justify-center overflow-hidden shadow-sm transition-all duration-200",
+                  branding?.icon?.url
+                    ? "bg-white p-1"
+                    : "bg-sidebar-primary ring-2 ring-sidebar-primary/20"
+                )}>
+                  {branding?.icon?.url ? (
+                    <img
+                      src={branding.icon.url}
+                      alt={currentOrganization?.name}
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <span className="font-display font-bold text-sidebar-primary-foreground text-lg">
+                      {currentOrganization?.name.charAt(0).toUpperCase() || "B"}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col">
                   <span className="font-bold text-sm leading-tight truncate w-[120px]">
