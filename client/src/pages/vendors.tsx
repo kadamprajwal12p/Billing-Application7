@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation } from "wouter";
 import { useOrganization } from "@/context/OrganizationContext";
+import { useBranding } from "@/hooks/use-branding";
 import { cn } from "@/lib/utils";
 import {
     Plus,
@@ -192,6 +193,8 @@ interface VendorDetailPanelProps {
 }
 
 function VendorDetailPanel({ vendor, onClose, onEdit, onDelete }: VendorDetailPanelProps) {
+    const { currentOrganization } = useOrganization();
+    const { data: branding } = useBranding();
     const [, setLocation] = useLocation();
     const { toast } = useToast();
     const [activeTab, setActiveTab] = useState("overview");
@@ -857,27 +860,33 @@ function VendorDetailPanel({ vendor, onClose, onEdit, onDelete }: VendorDetailPa
                             style={{ color: '#000000' }}
                         >
                             <div className="px-8 md:px-10 py-10 flex-1 flex flex-col">
-                                <div className="flex justify-between items-start mb-12 border-b border-slate-200 pb-10">
-                                    <div className="flex gap-6 items-start">
-                                        {currentOrganization?.logoUrl && (
-                                            <img 
-                                                src={currentOrganization.logoUrl} 
-                                                alt="Company Logo" 
+                                <div className="flex justify-between items-start mb-12 border-b-2 border-slate-900 pb-10">
+                                    <div className="flex flex-col gap-4">
+                                        {branding?.logo?.url && (
+                                            <img
+                                                src={branding.logo.url}
+                                                alt="Company Logo"
                                                 className="h-16 w-auto object-contain"
                                             />
                                         )}
                                         <div>
-                                            <h2 className="text-xl font-bold uppercase text-slate-900">{currentOrganization?.name || 'Your Company'}</h2>
-                                            {currentOrganization?.address && (
-                                                <p className="text-sm text-slate-600 mt-1 whitespace-pre-line">
-                                                    {currentOrganization.address}
+                                            <h2 className="text-2xl font-bold uppercase text-slate-900 tracking-tight leading-none">{currentOrganization?.name}</h2>
+                                            <div className="text-sm text-slate-600 mt-3 space-y-1">
+                                                {currentOrganization?.street1 && <p>{currentOrganization.street1}</p>}
+                                                {currentOrganization?.street2 && <p>{currentOrganization.street2}</p>}
+                                                <p>
+                                                    {[currentOrganization?.city, currentOrganization?.state, currentOrganization?.postalCode].filter(Boolean).join(', ')}
                                                 </p>
-                                            )}
+                                                {currentOrganization?.gstin && (
+                                                    <p className="font-bold text-slate-900 pt-1 text-[11px] uppercase tracking-wider mt-2 border-t border-slate-100 w-fit">GSTIN: {currentOrganization.gstin}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <h1 className="text-4xl font-light text-slate-400 uppercase tracking-widest mb-2">Statement</h1>
+                                        <h1 className="text-4xl font-light text-slate-400 uppercase tracking-widest mb-4">Statement</h1>
                                         <div className="space-y-1 text-sm text-slate-600">
+                                            <p><span className="text-slate-400 uppercase font-medium">Date:</span> {formatDate(new Date().toISOString())}</p>
                                             <p><span className="text-slate-400 uppercase font-medium">Period:</span> {statementPeriod.start} - {statementPeriod.end}</p>
                                         </div>
                                     </div>
@@ -1116,7 +1125,7 @@ export default function VendorsPage() {
                     const text = await file.text();
                     const data = JSON.parse(text);
                     const vendorsToImport = Array.isArray(data) ? data : data.vendors || [];
-                    
+
                     for (const vendor of vendorsToImport) {
                         await fetch('/api/vendors', {
                             method: 'POST',
@@ -1130,7 +1139,7 @@ export default function VendorsPage() {
                     const text = await file.text();
                     const lines = text.split('\n').filter(line => line.trim());
                     const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-                    
+
                     let importCount = 0;
                     for (let i = 1; i < lines.length; i++) {
                         const values = lines[i].split(',');
@@ -1138,7 +1147,7 @@ export default function VendorsPage() {
                         headers.forEach((header, idx) => {
                             vendor[header] = values[idx]?.trim() || '';
                         });
-                        
+
                         await fetch('/api/vendors', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -1160,7 +1169,7 @@ export default function VendorsPage() {
                     const sheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[sheetName];
                     const data = XLSX.utils.sheet_to_json(worksheet);
-                    
+
                     for (const row of data) {
                         const r = row as Record<string, any>;
                         await fetch('/api/vendors', {
@@ -1213,7 +1222,7 @@ export default function VendorsPage() {
                     headers.join(','),
                     ...exportData.map(row => headers.map(h => `"${(row as any)[h] || ''}"`).join(','))
                 ].join('\n');
-                
+
                 const blob = new Blob([csvContent], { type: 'text/csv' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1435,7 +1444,7 @@ export default function VendorsPage() {
                                                         <td className="px-3 py-3 font-medium text-sidebar">{vendor.displayName || vendor.name}</td>
                                                         <td className="px-3 py-3 text-slate-600">{vendor.companyName || '-'}</td>
                                                         <td className="px-3 py-3 text-slate-600">{vendor.email || '-'}</td>
-                                        <td className="px-3 py-3 text-slate-600">{vendor.mobile || vendor.workPhone || vendor.phone || '-'}</td>
+                                                        <td className="px-3 py-3 text-slate-600">{vendor.mobile || vendor.workPhone || vendor.phone || '-'}</td>
                                                         <td className="px-3 py-3 text-right font-medium">{formatCurrency(vendor.payables || 0)}</td>
                                                         <td className="px-3 py-3 text-right font-medium text-green-600">{formatCurrency(vendor.unusedCredits || 0)}</td>
                                                     </tr>
