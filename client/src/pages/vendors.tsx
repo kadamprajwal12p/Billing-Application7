@@ -1367,10 +1367,6 @@ export default function VendorsPage() {
                                                 <Settings className="h-4 w-4" />
                                                 Preferences
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={fetchVendors} className="gap-2">
-                                                <RefreshCw className="h-4 w-4" />
-                                                Refresh List
-                                            </DropdownMenuItem>
                                             <DropdownMenuItem onClick={handleResetColumnWidth} className="gap-2">
                                                 <RefreshCw className="h-4 w-4 rotate-180" />
                                                 Reset Column Width
