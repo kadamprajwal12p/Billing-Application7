@@ -95,6 +95,9 @@ import { generatePDFFromElement } from "@/lib/pdf-utils";
 interface Vendor {
     id: string;
     name: string;
+    mobile?: string;
+    workPhone?: string;
+    phone?: string;
     displayName?: string;
     firstName?: string;
     lastName?: string;
@@ -855,15 +858,28 @@ function VendorDetailPanel({ vendor, onClose, onEdit, onDelete }: VendorDetailPa
                         >
                             <div className="px-8 md:px-10 py-10 flex-1 flex flex-col">
                                 <div className="flex justify-between items-start mb-12 border-b border-slate-200 pb-10">
-                                    <div>
+                                    <div className="flex gap-6 items-start">
+                                        {currentOrganization?.logoUrl && (
+                                            <img 
+                                                src={currentOrganization.logoUrl} 
+                                                alt="Company Logo" 
+                                                className="h-16 w-auto object-contain"
+                                            />
+                                        )}
+                                        <div>
+                                            <h2 className="text-xl font-bold uppercase text-slate-900">{currentOrganization?.name || 'Your Company'}</h2>
+                                            {currentOrganization?.address && (
+                                                <p className="text-sm text-slate-600 mt-1 whitespace-pre-line">
+                                                    {currentOrganization.address}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
                                         <h1 className="text-4xl font-light text-slate-400 uppercase tracking-widest mb-2">Statement</h1>
                                         <div className="space-y-1 text-sm text-slate-600">
                                             <p><span className="text-slate-400 uppercase font-medium">Period:</span> {statementPeriod.start} - {statementPeriod.end}</p>
                                         </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <h2 className="text-xl font-bold uppercase text-slate-900">ACME Corporation</h2>
-                                        <p className="text-sm text-slate-600 mt-1">Maharashtra, India</p>
                                     </div>
                                 </div>
 
@@ -1227,6 +1243,7 @@ export default function VendorsPage() {
         });
     };
 
+    const { currentOrganization } = useOrganization();
     const { currentPage, totalPages, totalItems, itemsPerPage, paginatedItems, goToPage } = usePagination(filteredVendors, 10);
 
     const toggleSelectVendor = (id: string, e?: React.MouseEvent) => {
@@ -1418,7 +1435,7 @@ export default function VendorsPage() {
                                                         <td className="px-3 py-3 font-medium text-sidebar">{vendor.displayName || vendor.name}</td>
                                                         <td className="px-3 py-3 text-slate-600">{vendor.companyName || '-'}</td>
                                                         <td className="px-3 py-3 text-slate-600">{vendor.email || '-'}</td>
-                                                        <td className="px-3 py-3 text-slate-600">{vendor.mobile || vendor.phone || '-'}</td>
+                                        <td className="px-3 py-3 text-slate-600">{vendor.mobile || vendor.workPhone || vendor.phone || '-'}</td>
                                                         <td className="px-3 py-3 text-right font-medium">{formatCurrency(vendor.payables || 0)}</td>
                                                         <td className="px-3 py-3 text-right font-medium text-green-600">{formatCurrency(vendor.unusedCredits || 0)}</td>
                                                     </tr>

@@ -474,7 +474,29 @@ export default function InvoiceCreate() {
   const [newPersonPhone, setNewPersonPhone] = useState("");
   const [newPersonCustomerId, setNewPersonCustomerId] = useState("");
 
+  const { currentOrganization } = useAppStore();
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [invoiceNumber, setInvoiceNumber] = useState("");
+
+  const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
+
+  // Fetch next invoice number
+  const getNextInvoiceNumber = async () => {
+    try {
+      const response = await fetch("/api/invoices/next-number");
+      const data = await response.json();
+      if (data.success) {
+        setInvoiceNumber(data.data.invoiceNumber);
+      }
+    } catch (error) {
+      console.error("Error fetching next invoice number:", error);
+    }
+  };
+
+  useEffect(() => {
+    getNextInvoiceNumber();
+  }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -840,7 +862,7 @@ export default function InvoiceCreate() {
                         <span className="bg-secondary/50 border border-r-0 border-border/60 rounded-l-md px-3 py-2.5 text-sm text-muted-foreground whitespace-nowrap">INV-</span>
                         <Input
                           className="flex-1 min-w-0 rounded-l-none border-l-0 focus-visible:ring-0 focus-visible:border-primary"
-                          value={invoiceNumber}
+                          value={invoiceNumber || ""}
                           onChange={(e) => setInvoiceNumber(e.target.value)}
                         />
                       </div>
