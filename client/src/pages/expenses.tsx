@@ -271,7 +271,7 @@ export default function Expenses() {
   const [activeTab, setActiveTab] = useState("all-expenses");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const [sortBy, setSortBy] = useState("createdTime");
+  const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const handleSort = (field: string) => {
@@ -684,7 +684,7 @@ export default function Expenses() {
       bVal = parseFloat(String(bVal)) || 0;
     }
 
-    if (sortBy === 'date' || sortBy === 'createdTime') {
+    if (sortBy === 'date' || sortBy === 'createdTime' || sortBy === 'createdAt') {
       aVal = new Date(aVal).getTime();
       bVal = new Date(bVal).getTime();
     }
@@ -884,8 +884,8 @@ export default function Expenses() {
                             <DropdownMenuItem onClick={() => handleSort('expenseAccount')} className={cn(sortBy === 'expenseAccount' && "bg-blue-50 text-blue-700 font-medium")}>
                               Category {sortBy === 'expenseAccount' && (sortOrder === "asc" ? "↑" : "↓")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleSort('createdTime')} className={cn(sortBy === 'createdTime' && "bg-blue-50 text-blue-700 font-medium")}>
-                              Created Time {sortBy === 'createdTime' && (sortOrder === "asc" ? "↑" : "↓")}
+                            <DropdownMenuItem onClick={() => handleSort('createdAt')} className={cn(sortBy === 'createdAt' && "bg-blue-50 text-blue-700 font-medium")}>
+                              Created Time {sortBy === 'createdAt' && (sortOrder === "asc" ? "↑" : "↓")}
                             </DropdownMenuItem>
                           </DropdownMenuSubContent>
                         </DropdownMenuPortal>

@@ -1,6 +1,38 @@
 {
   "expenses": [
     {
+      "id": "10",
+      "organizationId": "1",
+      "expenseNumber": "EXP-00010",
+      "date": "2026-01-28",
+      "expenseAccount": "employee_advance",
+      "amount": 29132,
+      "currency": "INR",
+      "paidThrough": "Petty Cash",
+      "expenseType": "services",
+      "sac": "",
+      "vendorId": "10",
+      "vendorName": "abc  abc",
+      "gstTreatment": "Overseas",
+      "sourceOfSupply": "Goa",
+      "destinationOfSupply": "[MH] - Maharashtra",
+      "reverseCharge": false,
+      "tax": "",
+      "taxAmount": 0,
+      "amountIs": "tax_exclusive",
+      "invoiceNumber": "012323827u73",
+      "notes": "",
+      "customerId": "",
+      "customerName": "",
+      "reportingTags": [],
+      "isBillable": false,
+      "status": "recorded",
+      "attachments": [],
+      "createdAt": "2026-01-28T08:20:12.060Z",
+      "updatedAt": "2026-01-28T08:20:12.060Z",
+      "createdTime": "2026-01-28T08:20:12.060Z"
+    },
+    {
       "id": "9",
       "organizationId": "1",
       "expenseNumber": "EXP-00009",
@@ -87,6 +119,6 @@
     "defaultUnit": "km",
     "mileageRates": []
   },
-  "nextExpenseId": 10,
+  "nextExpenseId": 11,
   "nextMileageId": 3
 }
