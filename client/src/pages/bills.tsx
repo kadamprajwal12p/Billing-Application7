@@ -1931,9 +1931,6 @@ export default function Bills() {
                       <Download className="mr-2 h-4 w-4" /> Export
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handlePreferences()}>
-                      <Lightbulb className="mr-2 h-4 w-4" /> Preferences
-                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => fetchBills()}>
                       <RefreshCw className="mr-2 h-4 w-4" /> Refresh List
                     </DropdownMenuItem>
