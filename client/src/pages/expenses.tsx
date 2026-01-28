@@ -913,10 +913,6 @@ export default function Expenses() {
                           </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                       </DropdownMenuSub>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem data-testid="menu-refresh" onClick={() => fetchExpenses()} className="gap-2">
-                        <RefreshCw className="h-4 w-4" /> Refresh List
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
