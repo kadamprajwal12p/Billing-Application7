@@ -1925,10 +1925,6 @@ export default function Bills() {
                     <DropdownMenuItem onClick={() => handleExport()}>
                       <Download className="mr-2 h-4 w-4" /> Export
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => fetchBills()}>
-                      <RefreshCw className="mr-2 h-4 w-4" /> Refresh List
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
