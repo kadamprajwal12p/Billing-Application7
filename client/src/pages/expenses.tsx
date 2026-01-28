@@ -917,9 +917,6 @@ export default function Expenses() {
                       <DropdownMenuItem data-testid="menu-refresh" onClick={() => fetchExpenses()} className="gap-2">
                         <RefreshCw className="h-4 w-4" /> Refresh List
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleResetColumnWidth} className="gap-2">
-                        <RefreshCw className="h-4 w-4 rotate-180" /> Reset Column Width
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
