@@ -1418,7 +1418,7 @@ export default function VendorsPage() {
                                                         <td className="px-3 py-3 font-medium text-sidebar">{vendor.displayName || vendor.name}</td>
                                                         <td className="px-3 py-3 text-slate-600">{vendor.companyName || '-'}</td>
                                                         <td className="px-3 py-3 text-slate-600">{vendor.email || '-'}</td>
-                                                        <td className="px-3 py-3 text-slate-600">{vendor.phone || '-'}</td>
+                                                        <td className="px-3 py-3 text-slate-600">{vendor.mobile || vendor.phone || '-'}</td>
                                                         <td className="px-3 py-3 text-right font-medium">{formatCurrency(vendor.payables || 0)}</td>
                                                         <td className="px-3 py-3 text-right font-medium text-green-600">{formatCurrency(vendor.unusedCredits || 0)}</td>
                                                     </tr>
