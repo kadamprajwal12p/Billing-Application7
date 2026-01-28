@@ -745,7 +745,7 @@ export default function PurchaseOrders() {
   const [selectedPOs, setSelectedPOs] = useState<string[]>([]);
   const [branding, setBranding] = useState<any>(null);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const [sortBy, setSortBy] = useState("createdTime");
+  const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const handleSort = (field: string) => {
@@ -1059,7 +1059,29 @@ export default function PurchaseOrders() {
     po.referenceNumber?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const { currentPage, totalPages, totalItems, itemsPerPage, paginatedItems, goToPage } = usePagination<any>(filteredPOs as any, 10);
+  const sortedPOs = [...filteredPOs].sort((a, b) => {
+    let aVal: any = a[sortBy as keyof PurchaseOrder] || "";
+    let bVal: any = b[sortBy as keyof PurchaseOrder] || "";
+
+    if (sortBy === 'total') {
+      aVal = parseFloat(String(aVal)) || 0;
+      bVal = parseFloat(String(bVal)) || 0;
+    }
+
+    if (sortBy === 'date' || sortBy === 'createdAt') {
+      aVal = new Date(aVal).getTime();
+      bVal = new Date(bVal).getTime();
+    }
+
+    if (typeof aVal === 'string') aVal = aVal.toLowerCase();
+    if (typeof bVal === 'string') bVal = bVal.toLowerCase();
+
+    if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
+    if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const { currentPage, totalPages, totalItems, itemsPerPage, paginatedItems, goToPage } = usePagination<any>(sortedPOs as any, 10);
 
   const getStatusBadge = (status: string) => {
     switch (status?.toUpperCase()) {
@@ -1240,8 +1262,8 @@ export default function PurchaseOrders() {
                             <DropdownMenuItem onClick={() => handleSort('total')} className={cn(sortBy === 'total' && "bg-blue-50 text-blue-700 font-medium")}>
                               Amount {sortBy === 'total' && (sortOrder === "asc" ? "↑" : "↓")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleSort('createdTime')} className={cn(sortBy === 'createdTime' && "bg-blue-50 text-blue-700 font-medium")}>
-                              Created Time {sortBy === 'createdTime' && (sortOrder === "asc" ? "↑" : "↓")}
+                            <DropdownMenuItem onClick={() => handleSort('createdAt')} className={cn(sortBy === 'createdAt' && "bg-blue-50 text-blue-700 font-medium")}>
+                              Created Time {sortBy === 'createdAt' && (sortOrder === "asc" ? "↑" : "↓")}
                             </DropdownMenuItem>
                           </DropdownMenuSubContent>
                         </DropdownMenuPortal>
