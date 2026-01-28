@@ -32,6 +32,7 @@ import {
   Lightbulb,
   ArrowUpDown
 } from "lucide-react";
+import { transformExpenseListForExcel, exportToExcel, transformBillListForExcel } from "@/lib/excel-utils";
 import { robustIframePrint } from "@/lib/robust-print";
 import { generatePDFFromElement } from "@/lib/pdf-utils";
 import { Button } from "@/components/ui/button";
@@ -96,6 +97,7 @@ import {
 interface BillItem {
   id: string;
   itemName: string;
+  name?: string;
   description?: string;
   account: string;
   quantity: number;
@@ -118,6 +120,8 @@ interface Bill {
   orderNumber?: string;
   vendorId: string;
   vendorName: string;
+  vendorEmail?: string;
+  vendorUnusedCredits?: number;
   vendorAddress?: {
     street1?: string;
     street2?: string;
@@ -151,6 +155,7 @@ interface Bill {
   pdfTemplate?: string;
   journalEntries?: JournalEntry[];
   createdAt?: string;
+  updatedAt?: string;
   creditsApplied?: Array<{
     creditId: string;
     creditNumber: string;
@@ -158,13 +163,6 @@ interface Bill {
     appliedDate: string;
   }>;
   paymentsRecorded?: Array<{
-    paymentId: string;
-    paymentNumber?: string;
-    amount: number;
-    date: string;
-    mode?: string;
-  }>;
-  paymentsMadeApplied?: Array<{
     paymentId: string;
     paymentNumber?: string;
     amount: number;
@@ -1469,13 +1467,29 @@ export default function Bills() {
 
   const fetchBills = async () => {
     try {
+      setLoading(true);
       const response = await fetch("/api/bills");
       if (response.ok) {
         const data = await response.json();
-        setBills(data.data || []);
+        const billsData = data.data || [];
+        
+        // Map itemName to name for items to fix PDF view LSP error
+        const billsWithMappedItems = billsData.map((bill: any) => ({
+          ...bill,
+          items: (bill.items || []).map((item: any) => ({
+            ...item,
+            name: item.itemName
+          }))
+        }));
+        
+        setBills(billsWithMappedItems);
       }
     } catch (error) {
-      console.error("Failed to fetch bills:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load bills. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -2057,7 +2071,7 @@ export default function Bills() {
                       {paginatedItems.map((bill: any) => (
                         <TableRow
                           key={bill.id}
-                          onClick={() => handleBillClick(bill)}
+                          onClick={() => handleBillClick(bill as Bill)}
                           className={`cursor-pointer hover-elevate ${selectedBill?.id === bill.id ? "bg-sidebar/5" : ""}`}
                           data-testid={`row-bill-${bill.id}`}
                         >
