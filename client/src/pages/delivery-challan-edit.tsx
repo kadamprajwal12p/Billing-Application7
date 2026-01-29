@@ -110,9 +110,9 @@ export default function DeliveryChallanEdit() {
       const response = await fetch(`/api/delivery-challans/${id}`);
       if (response.ok) {
         const data = await response.json();
-        const challan = data.data;
+        const challan = data.data as any;
 
-        setChallanNumber(challan.challanNumber.replace("DC-", ""));
+        setChallanNumber((challan.challanNumber || "").replace("DC-", ""));
         setReferenceNumber(challan.referenceNumber || "");
         setDate(new Date(challan.date));
         setSelectedCustomerId(challan.customerId);
