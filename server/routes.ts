@@ -5,12 +5,38 @@ import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { Buffer } from "buffer";
+import multer from "multer";
+import { randomUUID } from "crypto";
 import { EmailTriggerService } from "./src/services/emailTriggerService";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const DATA_DIR = path.join(__dirname, "data");
+const UPLOADS_DIR = path.join(__dirname, "uploads");
+const BILL_ATTACHMENTS_DIR = path.join(UPLOADS_DIR, "bill-attachments");
+
+// Ensure directories exist
+[DATA_DIR, UPLOADS_DIR, BILL_ATTACHMENTS_DIR].forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
+
+const storage_multer = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, BILL_ATTACHMENTS_DIR)
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname))
+  }
+});
+
+const upload = multer({ 
+  storage: storage_multer,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+});
 const ITEMS_FILE = path.join(DATA_DIR, "items.json");
 const QUOTES_FILE = path.join(DATA_DIR, "quotes.json");
 const CUSTOMERS_FILE = path.join(DATA_DIR, "customers.json");
@@ -599,6 +625,34 @@ export async function registerRoutes(
       res.json({ success: true, data: data.organizations });
     } catch (error) {
       res.status(500).json({ success: false, error: "Failed to read organizations" });
+    }
+  });
+
+  // File Upload for Bills
+  app.post("/api/bills/upload", upload.array('files', 5), (req: Request, res: Response) => {
+    try {
+      const files = (req.files as Express.Multer.File[]) || [];
+      const attachments = files.map(file => ({
+        id: randomUUID(),
+        fileName: file.originalname,
+        fileUrl: `/uploads/bill-attachments/${file.filename}`,
+        fileSize: file.size,
+        uploadedAt: new Date().toISOString()
+      }));
+      res.json({ success: true, data: attachments });
+    } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ success: false, error: "Upload failed" });
+    }
+  });
+  
+  // Serve bill attachments
+  app.get("/uploads/bill-attachments/:filename", (req, res) => {
+    const filePath = path.join(BILL_ATTACHMENTS_DIR, req.params.filename);
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).send("File not found");
     }
   });
 
