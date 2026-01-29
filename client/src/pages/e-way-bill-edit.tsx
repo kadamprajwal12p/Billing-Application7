@@ -189,6 +189,52 @@ export default function EWayBillEdit() {
     const [selectedItems, setSelectedItems] = useState<any[]>([]);
     const [placeOfDeliveryOpen, setPlaceOfDeliveryOpen] = useState(false);
     const [itemDetailsOpen, setItemDetailsOpen] = useState(true);
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleFileSelect = (files: FileList | null) => {
+        if (!files) return;
+        const newFiles = Array.from(files).filter(file => {
+            if (file.size > 10 * 1024 * 1024) {
+                toast({
+                    title: "File too large",
+                    description: `${file.name} exceeds 10MB limit`,
+                    variant: "destructive",
+                });
+                return false;
+            }
+            return true;
+        });
+        if (uploadedFiles.length + newFiles.length > 10) {
+            toast({
+                title: "Too many files",
+                description: "Maximum 10 files allowed",
+                variant: "destructive",
+            });
+            return;
+        }
+        setUploadedFiles(prev => [...prev, ...newFiles]);
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        handleFileSelect(e.dataTransfer.files);
+    };
+
+    const removeFile = (index: number) => {
+        setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    };
 
     useEffect(() => {
         fetchInitialData();
@@ -608,7 +654,27 @@ export default function EWayBillEdit() {
 
                     <div className="space-y-4">
                         <Label className="text-sm font-semibold text-slate-900">Documents</Label>
-                        <div className="border-2 border-dashed border-blue-200 rounded-lg p-10 bg-blue-50/20 flex flex-col items-center justify-center gap-2 group hover:bg-blue-50 transition-colors cursor-pointer">
+                        <div
+                            className={`border-2 border-dashed rounded-lg p-10 flex flex-col items-center justify-center gap-2 group transition-colors cursor-pointer ${
+                                isDragging
+                                    ? "border-blue-500 bg-blue-100"
+                                    : "border-blue-200 bg-blue-50/20 hover:bg-blue-50"
+                            }`}
+                            onClick={() => document.getElementById("file-upload-eway-edit")?.click()}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            data-testid="dropzone-documents"
+                        >
+                            <input
+                                id="file-upload-eway-edit"
+                                type="file"
+                                multiple
+                                className="hidden"
+                                onChange={(e) => handleFileSelect(e.target.files)}
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+                                data-testid="input-file-upload"
+                            />
                             <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
                                 <Upload className="h-6 w-6" />
                             </div>
@@ -619,6 +685,39 @@ export default function EWayBillEdit() {
                                 <p className="text-xs text-slate-500 mt-1">Up to 10 files (max 10MB each)</p>
                             </div>
                         </div>
+                        {uploadedFiles.length > 0 && (
+                            <div className="space-y-2">
+                                {uploadedFiles.map((file, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200"
+                                        data-testid={`file-item-${index}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <FileText className="h-5 w-5 text-blue-600" />
+                                            <div>
+                                                <p className="text-sm font-medium text-slate-900">{file.name}</p>
+                                                <p className="text-xs text-slate-500">
+                                                    {(file.size / 1024).toFixed(1)} KB
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                removeFile(index);
+                                            }}
+                                            className="h-8 w-8 text-slate-400 hover:text-red-600"
+                                            data-testid={`button-remove-file-${index}`}
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {selectedItems.length > 0 && (
