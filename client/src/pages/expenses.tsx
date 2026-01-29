@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -388,6 +388,82 @@ export default function Expenses() {
     newRateValue: "",
   });
 
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [mileageUploadedFiles, setMileageUploadedFiles] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isMileageDragging, setIsMileageDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const mileageFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = useCallback((files: FileList | null, isMileage: boolean = false) => {
+    if (!files) return;
+    const validFiles: File[] = [];
+    const maxSize = 10 * 1024 * 1024;
+
+    Array.from(files).forEach(file => {
+      if (file.size > maxSize) {
+        toast({
+          title: "File too large",
+          description: `${file.name} exceeds 10MB limit`,
+          variant: "destructive"
+        });
+      } else {
+        validFiles.push(file);
+      }
+    });
+
+    if (validFiles.length > 0) {
+      if (isMileage) {
+        setMileageUploadedFiles(prev => [...prev, ...validFiles]);
+      } else {
+        setUploadedFiles(prev => [...prev, ...validFiles]);
+      }
+      toast({
+        title: "Files uploaded",
+        description: `${validFiles.length} file(s) added successfully`
+      });
+    }
+  }, [toast]);
+
+  const handleDragOver = useCallback((e: React.DragEvent, isMileage: boolean = false) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isMileage) {
+      setIsMileageDragging(true);
+    } else {
+      setIsDragging(true);
+    }
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent, isMileage: boolean = false) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isMileage) {
+      setIsMileageDragging(false);
+    } else {
+      setIsDragging(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent, isMileage: boolean = false) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isMileage) {
+      setIsMileageDragging(false);
+    } else {
+      setIsDragging(false);
+    }
+    handleFileSelect(e.dataTransfer.files, isMileage);
+  }, [handleFileSelect]);
+
+  const removeFile = useCallback((index: number, isMileage: boolean = false) => {
+    if (isMileage) {
+      setMileageUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    } else {
+      setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    }
+  }, []);
+
   const { data: expensesData, isLoading } = useQuery<{ success: boolean; data: Expense[] }>({
     queryKey: ['/api/expenses'],
   });
@@ -567,6 +643,7 @@ export default function Expenses() {
       isBillable: false,
       status: "recorded",
     });
+    setUploadedFiles([]);
   };
 
   const resetMileageForm = () => {
@@ -589,6 +666,7 @@ export default function Expenses() {
       customerName: "",
       reportingTags: [],
     });
+    setMileageUploadedFiles([]);
   };
 
   const handleSubmitExpense = () => {
@@ -1674,16 +1752,75 @@ export default function Expenses() {
               </div>
 
               <div className="space-y-4">
-                <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx"
+                  onChange={(e) => handleFileSelect(e.target.files, false)}
+                  data-testid="input-file-upload"
+                />
+                <div
+                  className={cn(
+                    "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
+                    isDragging ? "border-sidebar bg-sidebar/5" : "border-slate-300 hover:border-sidebar/50"
+                  )}
+                  onDragOver={(e) => handleDragOver(e, false)}
+                  onDragLeave={(e) => handleDragLeave(e, false)}
+                  onDrop={(e) => handleDrop(e, false)}
+                  onClick={() => fileInputRef.current?.click()}
+                  data-testid="dropzone-expense"
+                >
                   <div className="h-16 w-16 mx-auto mb-4 bg-slate-100 rounded-lg flex items-center justify-center">
                     <Upload className="h-8 w-8 text-slate-400" />
                   </div>
                   <p className="font-medium mb-1">Drag or Drop your Receipts</p>
                   <p className="text-xs text-muted-foreground mb-4">Maximum file size allowed is 10MB</p>
-                  <Button variant="outline" className="gap-2" data-testid="button-upload-files">
+                  <Button
+                    variant="outline"
+                    className="gap-2"
+                    data-testid="button-upload-files"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      fileInputRef.current?.click();
+                    }}
+                  >
                     <Upload className="h-4 w-4" /> Upload your Files
                   </Button>
                 </div>
+
+                {uploadedFiles.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="text-black font-medium">Uploaded Files ({uploadedFiles.length})</Label>
+                    <div className="space-y-2">
+                      {uploadedFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2 bg-slate-50 rounded-lg border"
+                          data-testid={`file-item-${index}`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FileText className="h-4 w-4 text-slate-500 flex-shrink-0" />
+                            <span className="text-sm truncate">{file.name}</span>
+                            <span className="text-xs text-muted-foreground flex-shrink-0">
+                              ({(file.size / 1024).toFixed(1)} KB)
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 flex-shrink-0"
+                            onClick={() => removeFile(index, false)}
+                            data-testid={`button-remove-file-${index}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -1975,16 +2112,75 @@ export default function Expenses() {
               </div>
 
               <div className="space-y-4">
-                <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                <input
+                  type="file"
+                  ref={mileageFileInputRef}
+                  className="hidden"
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx"
+                  onChange={(e) => handleFileSelect(e.target.files, true)}
+                  data-testid="input-mileage-file-upload"
+                />
+                <div
+                  className={cn(
+                    "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
+                    isMileageDragging ? "border-sidebar bg-sidebar/5" : "border-slate-300 hover:border-sidebar/50"
+                  )}
+                  onDragOver={(e) => handleDragOver(e, true)}
+                  onDragLeave={(e) => handleDragLeave(e, true)}
+                  onDrop={(e) => handleDrop(e, true)}
+                  onClick={() => mileageFileInputRef.current?.click()}
+                  data-testid="dropzone-mileage"
+                >
                   <div className="h-16 w-16 mx-auto mb-4 bg-slate-100 rounded-lg flex items-center justify-center">
                     <Upload className="h-8 w-8 text-slate-400" />
                   </div>
                   <p className="font-medium mb-1">Drag or Drop your Receipts</p>
                   <p className="text-xs text-muted-foreground mb-4">Maximum file size allowed is 10MB</p>
-                  <Button variant="outline" className="gap-2" data-testid="button-upload-mileage-files">
+                  <Button
+                    variant="outline"
+                    className="gap-2"
+                    data-testid="button-upload-mileage-files"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      mileageFileInputRef.current?.click();
+                    }}
+                  >
                     <Upload className="h-4 w-4" /> Upload your Files
                   </Button>
                 </div>
+
+                {mileageUploadedFiles.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="text-black font-medium">Uploaded Files ({mileageUploadedFiles.length})</Label>
+                    <div className="space-y-2">
+                      {mileageUploadedFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2 bg-slate-50 rounded-lg border"
+                          data-testid={`mileage-file-item-${index}`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FileText className="h-4 w-4 text-slate-500 flex-shrink-0" />
+                            <span className="text-sm truncate">{file.name}</span>
+                            <span className="text-xs text-muted-foreground flex-shrink-0">
+                              ({(file.size / 1024).toFixed(1)} KB)
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 flex-shrink-0"
+                            onClick={() => removeFile(index, true)}
+                            data-testid={`button-remove-mileage-file-${index}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
