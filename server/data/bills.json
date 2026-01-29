@@ -37,15 +37,15 @@
       "adjustment": 0,
       "adjustmentDescription": "",
       "total": 45360,
-      "amountPaid": 4999.98,
-      "balanceDue": 0,
+      "amountPaid": 0,
+      "balanceDue": 45360,
       "notes": "",
       "attachments": [],
-      "status": "PARTIALLY_PAID",
+      "status": "OPEN",
       "pdfTemplate": "Standard Template",
       "journalEntries": [],
       "createdAt": "2026-01-28T09:14:09.592Z",
-      "updatedAt": "2026-01-28T09:15:15.122Z",
+      "updatedAt": "2026-01-29T03:38:16.539Z",
       "createdBy": "Admin User",
       "activityLogs": [
         {
@@ -60,6 +60,13 @@
           "timestamp": "2026-01-28T09:14:43.237Z",
           "action": "payment",
           "description": "Payment of ₹4,999.98 recorded via PM-00076",
+          "user": "System"
+        },
+        {
+          "id": "1769657896539",
+          "timestamp": "2026-01-29T03:38:16.539Z",
+          "action": "payment_voided",
+          "description": "Payment of ₹4,999.98 voided (PM-00076)",
           "user": "System"
         }
       ]
@@ -190,86 +197,6 @@
           "creditNumber": "VC-00018",
           "amount": 540,
           "appliedDate": "2026-01-27"
-        }
-      ]
-    },
-    {
-      "id": "1769492486606",
-      "organizationId": "1",
-      "billNumber": "29",
-      "orderNumber": "PO-2025-0018",
-      "vendorId": "9",
-      "vendorName": "Cybaem Technology",
-      "vendorAddress": {},
-      "billDate": "2026-01-27",
-      "dueDate": "2026-01-27",
-      "paymentTerms": "Due on Receipt",
-      "reverseCharge": false,
-      "subject": "Bill for Purchase Order #PO-2025-0018",
-      "items": [
-        {
-          "id": "item-1769492475348-0",
-          "itemName": "Laptop",
-          "description": "good",
-          "account": "input_igst",
-          "quantity": 1,
-          "rate": 14000,
-          "tax": "gst_18",
-          "taxAmount": 2520,
-          "customerDetails": "none",
-          "amount": 14000
-        }
-      ],
-      "subTotal": 14000,
-      "discountType": "percent",
-      "discountValue": 0,
-      "discountAmount": 0,
-      "taxType": "TDS",
-      "taxCategory": "none",
-      "taxAmount": 2520,
-      "adjustment": 0,
-      "adjustmentDescription": "",
-      "total": 16520,
-      "amountPaid": 16520,
-      "balanceDue": 0,
-      "notes": "",
-      "attachments": [],
-      "status": "PAID",
-      "pdfTemplate": "Standard Template",
-      "journalEntries": [],
-      "createdAt": "2026-01-27T05:41:26.606Z",
-      "updatedAt": "2026-01-27T05:45:52.179Z",
-      "createdBy": "Admin User",
-      "activityLogs": [
-        {
-          "id": "1",
-          "timestamp": "2026-01-27T05:41:26.606Z",
-          "action": "created",
-          "description": "Bill created for ₹16,520",
-          "user": "Admin User"
-        },
-        {
-          "id": "2",
-          "timestamp": "2026-01-27T05:42:22.502Z",
-          "action": "payment",
-          "description": "Payment of ₹520 recorded",
-          "user": "Admin User"
-        },
-        {
-          "id": "1769492752184",
-          "timestamp": "2026-01-27T05:45:52.179Z",
-          "action": "payment",
-          "description": "Payment of ₹16,000 recorded via PM-00070",
-          "user": "System"
-        }
-      ],
-      "paymentsRecorded": [
-        {
-          "paymentId": "direct-1769492542502",
-          "paymentNumber": "PM-00069",
-          "amount": 520,
-          "date": "2026-01-27",
-          "mode": "Cash"
         }
       ]
     },

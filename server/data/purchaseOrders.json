@@ -49,12 +49,12 @@
       "notes": "",
       "termsAndConditions": "",
       "attachments": [],
-      "status": "ISSUED",
+      "status": "CANCELLED",
       "receiveStatus": "YET TO BE RECEIVED",
       "billedStatus": "BILLED",
       "pdfTemplate": "Standard Template",
       "createdAt": "2026-01-28T09:13:59.138Z",
-      "updatedAt": "2026-01-28T09:14:06.212Z",
+      "updatedAt": "2026-01-29T03:35:46.458Z",
       "createdBy": "Admin User",
       "activityLogs": [
         {
@@ -69,6 +69,13 @@
           "timestamp": "2026-01-28T09:14:06.212Z",
           "action": "converted_to_bill",
           "description": "Purchase Order converted to Bill",
+          "user": "Admin User"
+        },
+        {
+          "id": "3",
+          "timestamp": "2026-01-29T03:35:46.458Z",
+          "action": "cancelled",
+          "description": "Purchase Order has been cancelled",
           "user": "Admin User"
         }
       ]
@@ -122,12 +129,12 @@
       "notes": "",
       "termsAndConditions": "",
       "attachments": [],
-      "status": "ISSUED",
-      "receiveStatus": "YET TO BE RECEIVED",
+      "status": "RECEIVED",
+      "receiveStatus": "RECEIVED",
       "billedStatus": "BILLED",
       "pdfTemplate": "Standard Template",
       "createdAt": "2026-01-27T06:07:03.561Z",
-      "updatedAt": "2026-01-27T12:31:28.877Z",
+      "updatedAt": "2026-01-29T03:36:25.152Z",
       "createdBy": "Admin User",
       "activityLogs": [
         {
@@ -177,6 +184,13 @@
           "timestamp": "2026-01-27T12:31:28.877Z",
           "action": "issued",
           "description": "Purchase Order has been issued",
+          "user": "Admin User"
+        },
+        {
+          "id": "8",
+          "timestamp": "2026-01-29T03:36:25.152Z",
+          "action": "received",
+          "description": "Purchase Order has been received",
           "user": "Admin User"
         }
       ],

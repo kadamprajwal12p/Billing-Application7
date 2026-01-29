@@ -130,6 +130,8 @@ interface Vendor {
     payables?: number;
     unusedCredits?: number;
     status?: string;
+    isCrm?: boolean;
+    isPortalEnabled?: boolean;
     createdAt?: string;
 }
 
@@ -994,6 +996,7 @@ export default function VendorsPage() {
     const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [currentView, setCurrentView] = useState("all");
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [vendorToDelete, setVendorToDelete] = useState<string | null>(null);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -1082,6 +1085,48 @@ export default function VendorsPage() {
             (vendor.displayName || vendor.name).toLowerCase().includes(searchTerm.toLowerCase()) ||
             (vendor.email && vendor.email.toLowerCase().includes(searchTerm.toLowerCase()))
         );
+
+        // Apply View Filters
+        if (currentView === "active") {
+            filtered = filtered.filter(v => v.status === "active");
+        } else if (currentView === "inactive") {
+            filtered = filtered.filter(v => v.status === "inactive");
+        } else if (currentView === "crm") {
+            filtered = filtered.filter(v => v.isCrm === true);
+        } else if (currentView === "portal_enabled") {
+            filtered = filtered.filter(v => v.isPortalEnabled === true);
+        } else if (currentView === "portal_disabled") {
+            filtered = filtered.filter(v => v.isPortalEnabled !== true);
+        } else if (currentView === "duplicates") {
+            const seenNames = new Map<string, string[]>();
+            const seenEmails = new Map<string, string[]>();
+            const duplicates = new Set<string>();
+
+            vendors.forEach(v => {
+                const name = (v.displayName || v.name).toLowerCase();
+                const email = (v.email || "").toLowerCase();
+
+                if (name) {
+                    const ids = seenNames.get(name) || [];
+                    ids.push(v.id);
+                    seenNames.set(name, ids);
+                }
+                if (email) {
+                    const ids = seenEmails.get(email) || [];
+                    ids.push(v.id);
+                    seenEmails.set(email, ids);
+                }
+            });
+
+            seenNames.forEach(ids => {
+                if (ids.length > 1) ids.forEach(id => duplicates.add(id));
+            });
+            seenEmails.forEach(ids => {
+                if (ids.length > 1) ids.forEach(id => duplicates.add(id));
+            });
+
+            filtered = filtered.filter(v => duplicates.has(v.id));
+        }
 
         return filtered.sort((a, b) => {
             let valA: any = a[sortBy as keyof Vendor] || "";
@@ -1278,9 +1323,42 @@ export default function VendorsPage() {
 
                             {/* Header */}
                             <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-white sticky top-0 z-10 min-h-[73px] h-auto">
-                                <div className="flex items-center gap-4 flex-1">
-                                    <h1 className="text-xl font-semibold text-slate-900 line-clamp-2">All Vendors</h1>
-                                    <span className="text-sm text-slate-400">({vendors.length})</span>
+                                <div className="flex items-center gap-2 flex-1">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="text-xl font-semibold text-slate-900 px-2 h-auto gap-2 hover:bg-slate-50">
+                                                {currentView === "all" ? "All Vendors" :
+                                                    currentView === "active" ? "Active Vendors" :
+                                                        currentView === "inactive" ? "Inactive Vendors" :
+                                                            currentView === "crm" ? "CRM Vendors" :
+                                                                currentView === "duplicates" ? "Duplicate Vendors" :
+                                                                    currentView === "portal_enabled" ? "Vendor Portal Enabled" :
+                                                                        "Vendor Portal Disabled"}
+                                                <ChevronDown className={cn("h-5 w-5 text-blue-600 transition-transform duration-200", false ? "rotate-180" : "")} />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="start" className="w-64 p-0">
+                                            <div className="py-2">
+                                                {[
+                                                    { id: "all", label: "All Vendors" },
+                                                    { id: "active", label: "Active Vendors" },
+                                                    { id: "crm", label: "CRM Vendors" },
+                                                    { id: "duplicates", label: "Duplicate Vendors" },
+                                                    { id: "inactive", label: "Inactive Vendors" },
+                                                    { id: "portal_enabled", label: "Vendor Portal Enabled" },
+                                                    { id: "portal_disabled", label: "Vendor Portal Disabled" },
+                                                ].map((view) => (
+                                                    <DropdownMenuItem
+                                                        key={view.id}
+                                                        onClick={() => setCurrentView(view.id)}
+                                                        className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-slate-50"
+                                                    >
+                                                        <span className={cn(currentView === view.id && "text-blue-600 font-medium")}>{view.label}</span>
+                                                    </DropdownMenuItem>
+                                                ))}
+                                            </div>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
 
                                 <div className="flex items-center gap-2">

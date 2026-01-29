@@ -169,6 +169,20 @@ export default function PaymentsMade() {
   const [paymentToVoid, setPaymentToVoid] = useState<string | null>(null);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMade | null>(null);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [currentView, setCurrentView] = useState("all");
+
+  const viewLabels: Record<string, string> = {
+    'all': 'All Payments',
+    'draft': 'Draft',
+    'paid': 'Paid',
+    'void': 'Void',
+    'check': 'Paid via Check',
+    'print_check': 'To Be Printed Checks',
+    'uncleared_check': 'Uncleared Checks',
+    'cleared_check': 'Cleared Checks',
+    'void_check': 'Void Checks',
+    'advance': 'Advance Payments'
+  };
   const [sortBy, setSortBy] = useState<string>("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
@@ -210,7 +224,7 @@ export default function PaymentsMade() {
           const text = await file.text();
           const data = JSON.parse(text);
           const paymentsToImport = Array.isArray(data) ? data : data.payments || [];
-          
+
           for (const payment of paymentsToImport) {
             await fetch('/api/payments-made', {
               method: 'POST',
@@ -224,7 +238,7 @@ export default function PaymentsMade() {
           const text = await file.text();
           const lines = text.split('\n').filter(line => line.trim());
           const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-          
+
           let importCount = 0;
           for (let i = 1; i < lines.length; i++) {
             const values = lines[i].split(',');
@@ -232,7 +246,7 @@ export default function PaymentsMade() {
             headers.forEach((header, idx) => {
               payment[header] = values[idx]?.trim() || '';
             });
-            
+
             await fetch('/api/payments-made', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -254,7 +268,7 @@ export default function PaymentsMade() {
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
           const data = XLSX.utils.sheet_to_json(worksheet);
-          
+
           for (const row of data) {
             const r = row as Record<string, any>;
             await fetch('/api/payments-made', {
@@ -308,7 +322,7 @@ export default function PaymentsMade() {
           headers.join(','),
           ...exportData.map(row => headers.map(h => `"${(row as any)[h] || ''}"`).join(','))
         ].join('\n');
-        
+
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -353,7 +367,40 @@ export default function PaymentsMade() {
   }, [payments]);
 
   const filteredPayments = useMemo(() => {
-    let result = payments.filter(payment =>
+    let result = payments;
+
+    // Filter by view
+    switch (currentView) {
+      case 'draft':
+        result = result.filter(p => p.status?.toLowerCase() === 'draft');
+        break;
+      case 'paid':
+        result = result.filter(p => p.status?.toLowerCase() === 'paid');
+        break;
+      case 'void':
+        result = result.filter(p => p.status?.toLowerCase() === 'void' || p.status?.toLowerCase() === 'voided');
+        break;
+      case 'check':
+        result = result.filter(p => p.paymentMode?.toLowerCase() === 'cheque');
+        break;
+      case 'print_check':
+        result = result.filter(p => p.paymentMode?.toLowerCase() === 'cheque' && p.status?.toLowerCase() === 'draft');
+        break;
+      case 'uncleared_check':
+        result = result.filter(p => p.paymentMode?.toLowerCase() === 'cheque' && p.status?.toLowerCase() === 'paid');
+        break;
+      case 'cleared_check':
+        result = result.filter(p => p.paymentMode?.toLowerCase() === 'cheque' && p.status?.toLowerCase() === 'cleared');
+        break;
+      case 'void_check':
+        result = result.filter(p => p.paymentMode?.toLowerCase() === 'cheque' && (p.status?.toLowerCase() === 'void' || p.status?.toLowerCase() === 'voided'));
+        break;
+      case 'advance':
+        result = result.filter(p => p.paymentType?.toLowerCase().includes('advance') || (p.unusedAmount || 0) > 0);
+        break;
+    }
+
+    result = result.filter(payment =>
       getPaymentNumberString(payment.paymentNumber).toLowerCase().includes(searchQuery.toLowerCase()) ||
       String(payment.vendorName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       String(payment.reference || '').toLowerCase().includes(searchQuery.toLowerCase())
@@ -385,7 +432,7 @@ export default function PaymentsMade() {
     }
 
     return result;
-  }, [payments, searchQuery, sortBy, sortOrder]);
+  }, [payments, searchQuery, sortBy, sortOrder, currentView]);
 
   const { currentPage, totalPages, totalItems, itemsPerPage, paginatedItems, goToPage } = usePagination(filteredPayments, 10);
 
@@ -715,15 +762,25 @@ export default function PaymentsMade() {
                           "transition-all line-clamp-2",
                           selectedPayment ? "text-lg lg:text-xl" : "text-xl"
                         )}>
-                          All Payments
+                          {viewLabels[currentView] || 'All Payments'}
                         </span>
                         <ChevronDown className="h-4 w-4 text-slate-500 shrink-0" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-56">
-                      <DropdownMenuItem className="font-medium">All Payments</DropdownMenuItem>
-                      <DropdownMenuItem>Paid</DropdownMenuItem>
-                      <DropdownMenuItem>Refunded</DropdownMenuItem>
+                      <DropdownMenuItem className="font-medium" onClick={() => setCurrentView('all')}>All Payments</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setCurrentView('draft')}>Draft</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('paid')}>Paid</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('void')}>Void</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setCurrentView('check')}>Paid via Check</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('print_check')}>To Be Printed Checks</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('uncleared_check')}>Uncleared Checks</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('cleared_check')}>Cleared Checks</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('void_check')}>Void Checks</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setCurrentView('advance')}>Advance Payments</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -791,25 +848,25 @@ export default function PaymentsMade() {
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
                           <DropdownMenuSubContent>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleSort("date")}
                               className={sortBy === "date" ? "bg-blue-600 text-white" : ""}
                             >
                               Date {sortBy === "date" && (sortOrder === "asc" ? "↑" : "↓")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleSort("paymentNumber")}
                               className={sortBy === "paymentNumber" ? "bg-blue-600 text-white" : ""}
                             >
                               Payment Number {sortBy === "paymentNumber" && (sortOrder === "asc" ? "↑" : "↓")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleSort("vendorName")}
                               className={sortBy === "vendorName" ? "bg-blue-600 text-white" : ""}
                             >
                               Vendor Name {sortBy === "vendorName" && (sortOrder === "asc" ? "↑" : "↓")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               onClick={() => handleSort("amount")}
                               className={sortBy === "amount" ? "bg-blue-600 text-white" : ""}
                             >

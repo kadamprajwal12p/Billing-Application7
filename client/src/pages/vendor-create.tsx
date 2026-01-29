@@ -265,6 +265,8 @@ export default function VendorCreate() {
       swiftCode: "",
       branchName: "",
     },
+    isCrm: false,
+    isPortalEnabled: false,
     remarks: "",
   });
 
@@ -717,6 +719,24 @@ export default function VendorCreate() {
                     data-testid="checkbox-msme"
                   />
                   <span className="text-sm text-slate-600">This vendor is MSME registered</span>
+                </div>
+
+                <Label className="text-sm font-medium text-slate-700 pt-2">CRM Vendor</Label>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={formData.isCrm}
+                    onCheckedChange={(v) => handleInputChange('isCrm', v)}
+                  />
+                  <span className="text-sm text-slate-600">Mark as CRM Vendor</span>
+                </div>
+
+                <Label className="text-sm font-medium text-slate-700 pt-2">Vendor Portal</Label>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={formData.isPortalEnabled}
+                    onCheckedChange={(v) => handleInputChange('isPortalEnabled', v)}
+                  />
+                  <span className="text-sm text-slate-600">Enable Vendor Portal access</span>
                 </div>
 
                 {formData.msmeRegistered && (

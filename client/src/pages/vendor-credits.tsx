@@ -160,6 +160,16 @@ export default function VendorCredits() {
   const { toast } = useToast();
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentView, setCurrentView] = useState("all");
+
+  const viewLabels: Record<string, string> = {
+    'all': 'All Vendor Credits',
+    'draft': 'Draft',
+    'pending_approval': 'Pending Approval',
+    'open': 'Open',
+    'closed': 'Closed',
+    'void': 'Void'
+  };
   const [selectedCredit, setSelectedCredit] = useState<VendorCredit | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [creditToDelete, setCreditToDelete] = useState<string | null>(null);
@@ -446,6 +456,25 @@ export default function VendorCredits() {
   const vendorCredits = useMemo(() => {
     let result = vendorCreditsData?.data || [];
 
+    // Filter by view
+    switch (currentView) {
+      case 'draft':
+        result = result.filter(c => c.status?.toLowerCase() === 'draft');
+        break;
+      case 'pending_approval':
+        result = result.filter(c => c.status?.toLowerCase().includes('pending'));
+        break;
+      case 'open':
+        result = result.filter(c => c.status?.toLowerCase() === 'open');
+        break;
+      case 'closed':
+        result = result.filter(c => c.status?.toLowerCase() === 'closed');
+        break;
+      case 'void':
+        result = result.filter(c => c.status?.toLowerCase() === 'void' || c.status?.toLowerCase() === 'voided');
+        break;
+    }
+
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(credit =>
@@ -508,7 +537,7 @@ export default function VendorCredits() {
     }
 
     return result;
-  }, [vendorCreditsData?.data, searchQuery, sortBy, sortOrder]);
+  }, [vendorCreditsData?.data, searchQuery, sortBy, sortOrder, currentView]);
 
   const handleSort = (field: string) => {
     if (sortBy === field) {
@@ -665,26 +694,18 @@ export default function VendorCredits() {
                         variant="ghost"
                         className="gap-1.5 text-xl font-semibold text-slate-900 hover:text-slate-700 hover:bg-transparent p-0 h-auto transition-colors"
                       >
-                        All Vendor Credits
+                        {viewLabels[currentView] || 'All Vendor Credits'}
                         <ChevronDown className="h-4 w-4 text-slate-500" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-56">
-                      <DropdownMenuItem onClick={() => { }}>
-                        All
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { }}>
-                        Open
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { }}>
-                        Draft
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { }}>
-                        Closed
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { }}>
-                        Void
-                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('all')}>All</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => setCurrentView('draft')}>Draft</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('pending_approval')}>Pending Approval</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('open')}>Open</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('closed')}>Closed</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setCurrentView('void')}>Void</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <span className="text-sm text-slate-400">({vendorCredits.length})</span>

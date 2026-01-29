@@ -62,6 +62,46 @@
       "organizationId": "1",
       "createdAt": "2026-01-20T11:38:42.993Z",
       "updatedAt": "2026-01-20T11:38:42.993Z"
+    },
+    {
+      "id": "1769603441860",
+      "name": "prajwal Arun kadam",
+      "type": "service",
+      "hsnSac": "",
+      "usageUnit": "",
+      "rate": "15900",
+      "purchaseRate": "0.00",
+      "description": "",
+      "purchaseDescription": "",
+      "taxPreference": "non_taxable",
+      "intraStateTax": "GST18",
+      "interStateTax": "IGST18",
+      "salesAccount": "employee_advance",
+      "purchaseAccount": "cost_of_goods",
+      "isActive": true,
+      "organizationId": "1",
+      "createdAt": "2026-01-28T12:30:41.860Z",
+      "updatedAt": "2026-01-28T12:30:41.860Z"
+    },
+    {
+      "id": "1769603524054",
+      "name": "tab",
+      "type": "goods",
+      "hsnSac": "12312232",
+      "usageUnit": "box",
+      "rate": "1000",
+      "purchaseRate": "0.00",
+      "description": "ok do",
+      "purchaseDescription": "",
+      "taxPreference": "taxable",
+      "intraStateTax": "GST12",
+      "interStateTax": "IGST5",
+      "salesAccount": "input_cgst",
+      "purchaseAccount": "cost_of_goods",
+      "isActive": true,
+      "organizationId": "1",
+      "createdAt": "2026-01-28T12:32:04.054Z",
+      "updatedAt": "2026-01-28T12:32:04.054Z"
     }
   ]
 }

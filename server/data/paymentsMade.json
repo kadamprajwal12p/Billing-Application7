@@ -284,9 +284,9 @@
         }
       },
       "paymentType": "bill_payment",
-      "status": "PAID",
+      "status": "VOIDED",
       "createdAt": "2026-01-28T09:14:43.237Z",
-      "updatedAt": "2026-01-28T09:14:43.237Z"
+      "updatedAt": "2026-01-29T03:38:16.539Z"
     }
   ],
   "nextPaymentNumber": 77

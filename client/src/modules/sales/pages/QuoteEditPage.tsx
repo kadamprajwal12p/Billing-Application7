@@ -16,6 +16,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ManageSalespersonsDialog } from "@/components/ManageSalespersonsDialog";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 interface AttachedFile {
   id: string;
@@ -272,6 +273,10 @@ export default function QuoteEditPage() {
   };
 
   const handleItemChange = (index: number, itemId: string) => {
+    if (itemId === "add_new_item") {
+      setLocation(`/products/new?returnTo=quotes/${quoteId}/edit`);
+      return;
+    }
     const item = items.find(i => i.id === itemId);
     if (item) {
       const updatedItems = [...quoteItems];
@@ -676,6 +681,13 @@ export default function QuoteEditPage() {
                                 {items.map(i => (
                                   <SelectItem key={i.id} value={i.id}>{i.name}</SelectItem>
                                 ))}
+                                <Separator className="my-1" />
+                                <SelectItem value="add_new_item" className="text-blue-600 font-medium">
+                                  <div className="flex items-center gap-2">
+                                    <Plus className="h-4 w-4" />
+                                    Add New Item
+                                  </div>
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                             {/* Description if available */}

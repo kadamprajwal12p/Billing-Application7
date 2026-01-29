@@ -272,6 +272,7 @@ export default function Expenses() {
   const [activeTab, setActiveTab] = useState("all-expenses");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [currentView, setCurrentView] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -355,6 +356,8 @@ export default function Expenses() {
     customerId: "",
     customerName: "",
     reportingTags: [] as string[],
+    isBillable: false,
+    status: "recorded",
   });
 
   const [mileageForm, setMileageForm] = useState({
@@ -561,6 +564,8 @@ export default function Expenses() {
       customerId: "",
       customerName: "",
       reportingTags: [],
+      isBillable: false,
+      status: "recorded",
     });
   };
 
@@ -700,7 +705,19 @@ export default function Expenses() {
     return 0;
   });
 
-  const filteredExpenses = sortedExpenses.filter(expense =>
+  const filteredByView = sortedExpenses.filter(expense => {
+    if (currentView === "all") return true;
+    if (currentView === "unbilled") return expense.isBillable && !expense.invoiceNumber;
+    if (currentView === "invoiced") return !!expense.invoiceNumber;
+    if (currentView === "reimbursed") return expense.status === "reimbursed";
+    if (currentView === "billable") return expense.isBillable;
+    if (currentView === "non_billable") return !expense.isBillable;
+    if (currentView === "with_receipts") return expense.attachments && expense.attachments.length > 0;
+    if (currentView === "without_receipts") return !expense.attachments || expense.attachments.length === 0;
+    return true;
+  });
+
+  const filteredExpenses = filteredByView.filter(expense =>
     expense.expenseNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     expense.vendorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     expense.expenseAccount?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -748,6 +765,8 @@ export default function Expenses() {
         customerId: selectedExpense.customerId || "",
         customerName: selectedExpense.customerName || "",
         reportingTags: selectedExpense.reportingTags || [],
+        isBillable: selectedExpense.isBillable || false,
+        status: selectedExpense.status || "recorded",
       });
       setIsEditMode(true);
       setEditingExpenseId(selectedExpense.id);
@@ -791,14 +810,39 @@ export default function Expenses() {
                 <div className="flex items-center gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="text-lg font-semibold gap-1 text-left whitespace-normal h-auto" data-testid="dropdown-expense-filter">
-                        <span className="line-clamp-2">All Expenses</span>
-                        <ChevronDown className="h-4 w-4 shrink-0" />
+                      <Button variant="ghost" className="text-xl font-semibold text-slate-900 px-2 h-auto gap-2 hover:bg-slate-50">
+                        {currentView === "all" ? "All Expenses" :
+                          currentView === "unbilled" ? "Unbilled Expenses" :
+                            currentView === "invoiced" ? "Invoiced Expenses" :
+                              currentView === "reimbursed" ? "Reimbursed Expenses" :
+                                currentView === "billable" ? "Billable Expenses" :
+                                  currentView === "non_billable" ? "Non-Billable Expenses" :
+                                    currentView === "with_receipts" ? "Expenses with Receipts" :
+                                      "Expenses without Receipts"}
+                        <ChevronDown className="h-5 w-5 text-blue-600" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem onClick={() => setActiveTab("all-expenses")} data-testid="filter-all">All Expenses</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveTab("receipts-inbox")} data-testid="filter-receipts">Receipts Inbox</DropdownMenuItem>
+                    <DropdownMenuContent align="start" className="w-64 p-0">
+                      <div className="py-2">
+                        {[
+                          { id: "all", label: "All" },
+                          { id: "unbilled", label: "Unbilled" },
+                          { id: "invoiced", label: "Invoiced" },
+                          { id: "reimbursed", label: "Reimbursed" },
+                          { id: "billable", label: "Billable" },
+                          { id: "non_billable", label: "Non-Billable" },
+                          { id: "with_receipts", label: "With Receipts" },
+                          { id: "without_receipts", label: "Without Receipts" },
+                        ].map((view) => (
+                          <DropdownMenuItem
+                            key={view.id}
+                            onClick={() => setCurrentView(view.id)}
+                            className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-slate-50"
+                          >
+                            <span className={cn(currentView === view.id && "text-blue-600 font-medium")}>{view.label}</span>
+                          </DropdownMenuItem>
+                        ))}
+                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -1087,6 +1131,13 @@ export default function Expenses() {
                 onClose={handleClosePanel}
                 onEdit={handleEditExpense}
                 onDelete={handleDeleteExpense}
+                onFileSelect={(file) => {
+                  toast({
+                    title: "Receipt Attached",
+                    description: `Successfully attached ${file.name} to expense ${selectedExpense.expenseNumber}`,
+                  });
+                  // Here you would typically call a mutation to upload the file
+                }}
               />
             </ResizablePanel>
           </>
@@ -1561,37 +1612,64 @@ export default function Expenses() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-black font-medium">Customer Name</Label>
-                  <Select
-                    value={expenseForm.customerId}
-                    onValueChange={(value) => {
-                      const customer = customers.find(c => c.id === value);
-                      setExpenseForm(prev => ({
-                        ...prev,
-                        customerId: value,
-                        customerName: customer?.displayName || customer?.name || ''
-                      }));
-                    }}
-                  >
-                    <SelectTrigger className="w-full h-10 border-slate-300 hover:border-sidebar/60 hover:bg-slate-50 transition-colors" data-testid="select-customer">
-                      <SelectValue placeholder="Select or add a customer" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[280px]">
-                      {customers.map(customer => (
-                        <SelectItem key={customer.id} value={customer.id} className="cursor-pointer">
-                          {customer.displayName || customer.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-black font-medium">Customer Name</Label>
+                    <Select
+                      value={expenseForm.customerId}
+                      onValueChange={(value) => {
+                        const customer = customers.find(c => c.id === value);
+                        setExpenseForm(prev => ({
+                          ...prev,
+                          customerId: value,
+                          customerName: customer?.displayName || customer?.name || ''
+                        }));
+                      }}
+                    >
+                      <SelectTrigger className="w-full h-10 border-slate-300 hover:border-sidebar/60 hover:bg-slate-50 transition-colors" data-testid="select-customer">
+                        <SelectValue placeholder="Select or add a customer" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[280px]">
+                        {customers.map(customer => (
+                          <SelectItem key={customer.id} value={customer.id} className="cursor-pointer">
+                            {customer.displayName || customer.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-2 pt-8">
+                    <Checkbox
+                      id="isBillable"
+                      checked={expenseForm.isBillable}
+                      onCheckedChange={(checked) => setExpenseForm(prev => ({ ...prev, isBillable: !!checked }))}
+                    />
+                    <Label htmlFor="isBillable" className="cursor-pointer font-medium">Billable</Label>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Reporting Tags</Label>
-                  <button className="text-sidebar text-sm flex items-center gap-1" data-testid="button-associate-tags">
-                    <Tag className="h-4 w-4" /> Associate Tags
-                  </button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-black font-medium text-sm">Status</Label>
+                    <Select
+                      value={expenseForm.status}
+                      onValueChange={(value) => setExpenseForm(prev => ({ ...prev, status: value }))}
+                    >
+                      <SelectTrigger className="h-10 border-slate-300">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="recorded">Recorded</SelectItem>
+                        <SelectItem value="reimbursed">Reimbursed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Reporting Tags</Label>
+                    <button className="text-sidebar text-sm flex items-center gap-1" data-testid="button-associate-tags">
+                      <Tag className="h-4 w-4" /> Associate Tags
+                    </button>
+                  </div>
                 </div>
               </div>
 

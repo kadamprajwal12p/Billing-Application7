@@ -22,6 +22,7 @@ import { usePagination } from "@/hooks/use-pagination";
 import { TablePagination } from "@/components/table-pagination";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -745,6 +746,7 @@ export default function PurchaseOrders() {
   const [selectedPOs, setSelectedPOs] = useState<string[]>([]);
   const [branding, setBranding] = useState<any>(null);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [currentView, setCurrentView] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -1053,7 +1055,21 @@ export default function PurchaseOrders() {
     }
   };
 
-  const filteredPOs = purchaseOrders.filter(po =>
+  const filteredByView = purchaseOrders.filter(po => {
+    switch (currentView) {
+      case 'draft': return po.status?.toUpperCase() === 'DRAFT';
+      case 'pending_approval': return po.status?.toUpperCase() === 'PENDING_APPROVAL';
+      case 'approved': return po.status?.toUpperCase() === 'APPROVED';
+      case 'issued': return po.status?.toUpperCase() === 'ISSUED';
+      case 'billed': return po.billedStatus?.toUpperCase() === 'BILLED';
+      case 'partially_billed': return po.billedStatus?.toUpperCase() === 'PARTIALLY_BILLED';
+      case 'closed': return po.status?.toUpperCase() === 'CLOSED';
+      case 'cancelled': return po.status?.toUpperCase() === 'CANCELLED';
+      default: return true;
+    }
+  });
+
+  const filteredPOs = filteredByView.filter(po =>
     po.purchaseOrderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     po.vendorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     po.referenceNumber?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -1187,9 +1203,46 @@ export default function PurchaseOrders() {
           >
             <div className="flex flex-col h-full overflow-hidden">
               <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-white sticky top-0 z-10 min-h-[73px] h-auto">
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-semibold text-slate-900 line-clamp-2">All Purchase Orders</h1>
-                  <ChevronDown className="h-4 w-4 text-slate-500 shrink-0" />
+                <div className="flex items-center gap-0">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="text-xl font-semibold text-slate-900 px-2 h-auto gap-2 hover:bg-slate-50">
+                        {currentView === "all" ? "All Purchase Orders" :
+                          currentView === "draft" ? "Draft Purchase Orders" :
+                            currentView === "pending_approval" ? "Pending Approval" :
+                              currentView === "approved" ? "Approved Purchase Orders" :
+                                currentView === "issued" ? "Issued Purchase Orders" :
+                                  currentView === "billed" ? "Billed Purchase Orders" :
+                                    currentView === "partially_billed" ? "Partially Billed" :
+                                      currentView === "closed" ? "Closed Purchase Orders" :
+                                        "Canceled Purchase Orders"}
+                        <ChevronDown className="h-5 w-5 text-blue-600" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-64 p-0">
+                      <div className="py-2">
+                        {[
+                          { id: "all", label: "All" },
+                          { id: "draft", label: "Draft" },
+                          { id: "pending_approval", label: "Pending Approval" },
+                          { id: "approved", label: "Approved" },
+                          { id: "issued", label: "Issued" },
+                          { id: "billed", label: "Billed" },
+                          { id: "partially_billed", label: "Partially Billed" },
+                          { id: "closed", label: "Closed" },
+                          { id: "cancelled", label: "Canceled" },
+                        ].map((view) => (
+                          <DropdownMenuItem
+                            key={view.id}
+                            onClick={() => setCurrentView(view.id)}
+                            className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-slate-50"
+                          >
+                            <span className={cn(currentView === view.id && "text-blue-600 font-medium")}>{view.label}</span>
+                          </DropdownMenuItem>
+                        ))}
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
                 <div className="flex items-center gap-2">
                   {selectedPO ? (

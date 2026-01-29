@@ -93,6 +93,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+
 
 interface BillItem {
   id: string;
@@ -1472,7 +1474,7 @@ export default function Bills() {
       if (response.ok) {
         const data = await response.json();
         const billsData = data.data || [];
-        
+
         // Map itemName to name for items to fix PDF view LSP error
         const billsWithMappedItems = billsData.map((bill: any) => ({
           ...bill,
@@ -1481,7 +1483,7 @@ export default function Bills() {
             name: item.itemName
           }))
         }));
-        
+
         setBills(billsWithMappedItems);
       }
     } catch (error) {
@@ -1707,7 +1709,39 @@ export default function Bills() {
     }
   };
 
-  const filteredBills = bills.filter(
+  const filteredByStatus = bills.filter((bill) => {
+    const status = bill.status?.toUpperCase();
+    const balanceDue = bill.balanceDue || 0;
+    const total = bill.total || 0;
+    const dueDate = bill.dueDate ? new Date(bill.dueDate) : null;
+    const now = new Date();
+
+    switch (activeFilter) {
+      case "Draft":
+        return status === "DRAFT";
+      case "Pending Approval":
+        return status === "PENDING_APPROVAL";
+      case "Open":
+        return status === "OPEN" || (balanceDue > 0 && status !== "VOID");
+      case "Overdue":
+        return status === "OVERDUE" || (balanceDue > 0 && dueDate && dueDate < now);
+      case "Unpaid":
+        return balanceDue === total && total > 0;
+      case "Partially Paid":
+        return balanceDue > 0 && balanceDue < total;
+      case "Paid":
+        return balanceDue === 0 && total > 0;
+      case "Void":
+        return status === "VOID";
+      case "Credit Notes":
+        return bill.creditsApplied && bill.creditsApplied.length > 0;
+      case "All":
+      default:
+        return true;
+    }
+  });
+
+  const filteredBills = filteredByStatus.filter(
     (bill) =>
       bill.billNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       bill.vendorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1823,28 +1857,33 @@ export default function Bills() {
                         <ChevronDown className="h-4 w-4 text-slate-500 shrink-0" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56">
-                      <DropdownMenuItem onClick={() => setActiveFilter("All")}>
-                        All
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveFilter("Open")}>
-                        Open
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveFilter("Paid")}>
-                        Paid
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveFilter("Overdue")}>
-                        Overdue
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveFilter("Partially Paid")}>
-                        Partially Paid
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setActiveFilter("Void")}>
-                        Void
-                      </DropdownMenuItem>
+                    <DropdownMenuContent align="start" className="w-56 p-1">
+                      {[
+                        "All",
+                        "Draft",
+                        "Pending Approval",
+                        "Open",
+                        "Overdue",
+                        "Unpaid",
+                        "Partially Paid",
+                        "Paid",
+                        "Void",
+                        "Credit Notes",
+                      ].map((filter) => (
+                        <DropdownMenuItem
+                          key={filter}
+                          onClick={() => setActiveFilter(filter)}
+                          className={cn(
+                            "flex items-center justify-between px-3 py-2 cursor-pointer transition-colors",
+                            activeFilter === filter && "bg-blue-50 text-blue-600 font-medium"
+                          )}
+                        >
+                          {filter}
+                        </DropdownMenuItem>
+                      ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <span className="text-sm text-slate-400">({bills.length})</span>
+                  <span className="text-sm text-slate-400">({filteredBills.length})</span>
                 </div>
               </div>
 

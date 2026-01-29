@@ -85,7 +85,7 @@ const itemSchema = z.object({
   costPrice: z.string().optional(),
   purchaseAccount: z.string().default("cost_of_goods"),
   purchaseDescription: z.string().optional(),
-  preferredVendor: z.string().min(1, "Vendor is required"),
+  preferredVendor: z.string().optional(),
   intraStateTaxRate: z.string().default("gst18"),
   interStateTaxRate: z.string().default("igst18"),
 });
