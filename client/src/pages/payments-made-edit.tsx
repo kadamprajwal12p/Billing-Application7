@@ -8,6 +8,7 @@ import {
   X,
   AlertTriangle,
   Settings,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -126,6 +127,51 @@ export default function PaymentsMadeEdit() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("bill_payment");
   const [saving, setSaving] = useState(false);
+  const [attachments, setAttachments] = useState<any[]>([]);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    if (attachments.length + files.length > 5) {
+      toast({ title: "You can only upload up to 5 files", variant: "destructive" });
+      return;
+    }
+
+    const formDataUpload = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].size > 10 * 1024 * 1024) {
+        toast({ title: `File ${files[i].name} exceeds 10MB limit`, variant: "destructive" });
+        continue;
+      }
+      formDataUpload.append('files', files[i]);
+    }
+
+    setUploading(true);
+    try {
+      const response = await fetch('/api/payments-made/upload', {
+        method: 'POST',
+        body: formDataUpload
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setAttachments(prev => [...prev, ...result.data]);
+        toast({ title: "Files uploaded successfully" });
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      toast({ title: "Failed to upload files", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeAttachment = (id: string) => {
+    setAttachments(prev => prev.filter(a => a.id !== id));
+  };
 
   const [formData, setFormData] = useState({
     vendorId: "",
@@ -205,6 +251,7 @@ export default function PaymentsMadeEdit() {
         notes: payment.notes || "",
         attachments: [],
       });
+      setAttachments(payment.attachments || []);
 
       // Set active tab first so bills query will be enabled
       setActiveTab(paymentType);
@@ -318,6 +365,7 @@ export default function PaymentsMadeEdit() {
         billPayments: activeTab === "bill_payment" ? selectedBills : {},
         paymentType: activeTab,
         status,
+        attachments,
       };
       const response = await fetch(`/api/payments-made/${id}`, {
         method: "PUT",

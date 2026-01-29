@@ -15,9 +15,10 @@ const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, "data");
 const UPLOADS_DIR = path.join(__dirname, "uploads");
 const BILL_ATTACHMENTS_DIR = path.join(UPLOADS_DIR, "bill-attachments");
+const PAYMENT_ATTACHMENTS_DIR = path.join(UPLOADS_DIR, "payment-attachments");
 
 // Ensure directories exist
-[DATA_DIR, UPLOADS_DIR, BILL_ATTACHMENTS_DIR].forEach(dir => {
+[DATA_DIR, UPLOADS_DIR, BILL_ATTACHMENTS_DIR, PAYMENT_ATTACHMENTS_DIR].forEach(dir => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -649,6 +650,34 @@ export async function registerRoutes(
   // Serve bill attachments
   app.get("/uploads/bill-attachments/:filename", (req, res) => {
     const filePath = path.join(BILL_ATTACHMENTS_DIR, req.params.filename);
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).send("File not found");
+    }
+  });
+
+  // File Upload for Payments Made
+  app.post("/api/payments-made/upload", upload.array('files', 5), (req: Request, res: Response) => {
+    try {
+      const files = (req.files as Express.Multer.File[]) || [];
+      const attachments = files.map(file => ({
+        id: randomUUID(),
+        fileName: file.originalname,
+        fileUrl: `/uploads/payment-attachments/${file.filename}`,
+        fileSize: file.size,
+        uploadedAt: new Date().toISOString()
+      }));
+      res.json({ success: true, data: attachments });
+    } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ success: false, error: "Upload failed" });
+    }
+  });
+
+  // Serve payment attachments
+  app.get("/uploads/payment-attachments/:filename", (req, res) => {
+    const filePath = path.join(BILL_ATTACHMENTS_DIR, req.params.filename); // Using same DIR for now as per multer config or define another one
     if (fs.existsSync(filePath)) {
       res.sendFile(filePath);
     } else {
