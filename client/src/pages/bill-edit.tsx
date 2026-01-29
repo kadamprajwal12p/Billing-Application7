@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import {
   FileText, Plus, Trash2, ChevronDown, Search,
-  Upload, Info
+  Upload, Info, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AccountSelectDropdown } from "@/components/AccountSelectDropdown";
@@ -115,6 +115,51 @@ export default function BillEdit() {
   const [taxes, setTaxes] = useState<Tax[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [attachments, setAttachments] = useState<any[]>([]);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    if (attachments.length + files.length > 5) {
+      toast({ title: "You can only upload up to 5 files", variant: "destructive" });
+      return;
+    }
+
+    const formDataUpload = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].size > 10 * 1024 * 1024) {
+        toast({ title: `File ${files[i].name} exceeds 10MB limit`, variant: "destructive" });
+        continue;
+      }
+      formDataUpload.append('files', files[i]);
+    }
+
+    setUploading(true);
+    try {
+      const response = await fetch('/api/bills/upload', {
+        method: 'POST',
+        body: formDataUpload
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setAttachments(prev => [...prev, ...result.data]);
+        toast({ title: "Files uploaded successfully" });
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      toast({ title: "Failed to upload files", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeAttachment = (id: string) => {
+    setAttachments(prev => prev.filter(a => a.id !== id));
+  };
   const [loading, setLoading] = useState(false);
   const [loadingBill, setLoadingBill] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(true);
@@ -236,6 +281,7 @@ export default function BillEdit() {
           total: bill.total || 0,
           status: bill.status || "OPEN"
         });
+        setAttachments(bill.attachments || []);
       }
     } catch (error) {
       console.error('Failed to fetch bill:', error);
@@ -474,6 +520,7 @@ export default function BillEdit() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          attachments,
           subTotal: calculateSubTotal(),
           discountAmount: calculateDiscount(),
           taxAmount: calculateTaxTotal(),
@@ -956,13 +1003,42 @@ export default function BillEdit() {
                 </div>
                 <div>
                   <Label>Attach File(s) to Bill</Label>
-                  <div className="mt-1 border-2 border-dashed border-slate-200 rounded-lg p-4 text-center bg-white">
-                    <Button variant="outline" size="sm" className="gap-1.5">
+                  <div className="mt-1 border-2 border-dashed border-slate-200 rounded-lg p-4 text-center bg-white relative">
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleFileUpload}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      disabled={uploading}
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    />
+                    <Button variant="outline" size="sm" className="gap-1.5" disabled={uploading}>
                       <Upload className="h-4 w-4" />
-                      Upload File
+                      {uploading ? "Uploading..." : "Upload File"}
                     </Button>
                     <p className="text-xs text-slate-500 mt-2">You can upload a maximum of 5 files, 10MB each</p>
                   </div>
+                  {attachments.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {attachments.map((file: any) => (
+                        <div key={file.id} className="flex items-center justify-between p-2 bg-slate-50 rounded border border-slate-100">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <FileText className="h-4 w-4 text-slate-400 flex-shrink-0" />
+                            <span className="text-xs text-slate-600 truncate">{file.fileName}</span>
+                            <span className="text-[10px] text-slate-400">({(file.fileSize / 1024 / 1024).toFixed(2)} MB)</span>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-6 w-6 text-slate-400 hover:text-red-500"
+                            onClick={() => removeAttachment(file.id)}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

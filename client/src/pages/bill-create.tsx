@@ -158,6 +158,7 @@ export default function BillCreate() {
   const removeAttachment = (id: string) => {
     setAttachments(prev => prev.filter(a => a.id !== id));
   };
+  const [loading, setLoading] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingPO, setLoadingPO] = useState(false);
   const [poDataLoaded, setPoDataLoaded] = useState(false);
