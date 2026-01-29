@@ -1,6 +1,38 @@
 {
   "expenses": [
     {
+      "id": "11",
+      "organizationId": "1",
+      "expenseNumber": "EXP-00011",
+      "date": "2026-01-29",
+      "expenseAccount": "input_cgst",
+      "amount": 895,
+      "currency": "INR",
+      "paidThrough": "Cash",
+      "expenseType": "goods",
+      "sac": "",
+      "vendorId": "9",
+      "vendorName": "Cybaem Technology",
+      "gstTreatment": "Consumer",
+      "sourceOfSupply": "Chhattisgarh",
+      "destinationOfSupply": "[MH] - Maharashtra",
+      "reverseCharge": true,
+      "tax": "gst_12",
+      "taxAmount": 0,
+      "amountIs": "tax_exclusive",
+      "invoiceNumber": "120904",
+      "notes": "ok",
+      "customerId": "20",
+      "customerName": "praj tech",
+      "reportingTags": [],
+      "isBillable": true,
+      "status": "recorded",
+      "attachments": [],
+      "createdAt": "2026-01-29T05:22:32.530Z",
+      "updatedAt": "2026-01-29T05:22:32.530Z",
+      "createdTime": "2026-01-29T05:22:32.530Z"
+    },
+    {
       "id": "10",
       "organizationId": "1",
       "expenseNumber": "EXP-00010",
@@ -119,6 +151,6 @@
     "defaultUnit": "km",
     "mileageRates": []
   },
-  "nextExpenseId": 11,
+  "nextExpenseId": 12,
   "nextMileageId": 3
 }

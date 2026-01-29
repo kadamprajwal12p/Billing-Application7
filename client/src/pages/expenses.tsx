@@ -980,7 +980,10 @@ export default function Expenses() {
                         <Receipt className="h-4 w-4" />
                         Record Expense
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setShowRecordMileage(true)} className="gap-2 cursor-pointer">
+                      <DropdownMenuItem onClick={() => {
+                        setExpenseTab("record-mileage");
+                        setShowRecordExpense(true);
+                      }} className="gap-2 cursor-pointer">
                         <Car className="h-4 w-4" />
                         Record Mileage
                       </DropdownMenuItem>
