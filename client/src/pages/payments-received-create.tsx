@@ -135,7 +135,7 @@ export default function PaymentsReceivedCreate() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [customersLoading, setCustomersLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const fileInputRef = useState<HTMLInputElement | null>(null)[0];
+  const fileInputRef = { current: null as HTMLInputElement | null };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -749,7 +749,11 @@ export default function PaymentsReceivedCreate() {
                               variant="ghost"
                               size="icon"
                               className="h-6 w-6 text-slate-400 hover:text-red-500"
-                              onClick={() => removeFile(index)}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                removeFile(index);
+                              }}
                             >
                               <X className="h-4 w-4" />
                             </Button>
