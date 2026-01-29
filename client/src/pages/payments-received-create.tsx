@@ -134,6 +134,19 @@ export default function PaymentsReceivedCreate() {
   const [projectName, setProjectName] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [customersLoading, setCustomersLoading] = useState(true);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const fileInputRef = useState<HTMLInputElement | null>(null)[0];
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setSelectedFiles(prev => [...prev, ...files].slice(0, 10));
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
 
   // Sync with bootstrap
   useEffect(() => {
@@ -705,7 +718,17 @@ export default function PaymentsReceivedCreate() {
 
                   <div className="space-y-4">
                     <Label className="text-sm font-semibold text-slate-900">Documents</Label>
-                    <div className="border-2 border-dashed border-blue-200 rounded-lg p-10 bg-blue-50/20 flex flex-col items-center justify-center gap-2 group hover:bg-blue-50 transition-colors cursor-pointer">
+                    <input
+                      type="file"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileChange}
+                      id="file-upload"
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="border-2 border-dashed border-blue-200 rounded-lg p-10 bg-blue-50/20 flex flex-col items-center justify-center gap-2 group hover:bg-blue-50 transition-colors cursor-pointer"
+                    >
                       <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
                         <Upload className="h-6 w-6" />
                       </div>
@@ -715,7 +738,25 @@ export default function PaymentsReceivedCreate() {
                         </p>
                         <p className="text-xs text-slate-500 mt-1">Up to 10 files (max 10MB each)</p>
                       </div>
-                    </div>
+                    </label>
+
+                    {selectedFiles.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                        {selectedFiles.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 bg-white border border-slate-200 rounded-md text-sm">
+                            <span className="truncate max-w-[200px]">{file.name}</span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-slate-400 hover:text-red-500"
+                              onClick={() => removeFile(index)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Amount Received Input */}
